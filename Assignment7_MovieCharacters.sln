@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MovieCharacters.API", "Movi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MovieCharacters.DAL", "MovieCharacters.DAL\MovieCharacters.DAL.csproj", "{1BFEDC95-E491-4144-97CB-269E2BFB7941}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MovieCharacters.BLL", "MovieCharacters.BL\MovieCharacters.BLL.csproj", "{AA96C87E-0DC8-4916-AE76-CE2A8ED616DC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MovieCharacters.BLL", "MovieCharacters.BLL\MovieCharacters.BLL.csproj", "{AA96C87E-0DC8-4916-AE76-CE2A8ED616DC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
