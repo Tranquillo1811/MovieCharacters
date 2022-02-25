@@ -1,6 +1,6 @@
 # ob-oh-MovieCharactersAPI
 
-very simple Movie Characters App soleloy built for educational purposes
+very simple Movie Characters App solely built for educational purposes
 - uses .NET Core 5
 - uses Entity Framework
 
