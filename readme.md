@@ -1,4 +1,4 @@
-# ob-oh-Pokemon-Trainer
+# ob-oh-MovieCharactersAPI
 
 very simple Movie Characters App soleloy built for educational purposes
 - uses .NET Core 5
