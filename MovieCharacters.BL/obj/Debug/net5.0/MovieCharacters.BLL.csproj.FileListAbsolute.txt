@@ -1,0 +1,12 @@
+C:\Users\Oliver\Documents\GitRepositories\Noroff\Assignment7_MovieCharacters\MovieCharacters.BL\bin\Debug\net5.0\MovieCharacters.BLL.deps.json
+C:\Users\Oliver\Documents\GitRepositories\Noroff\Assignment7_MovieCharacters\MovieCharacters.BL\bin\Debug\net5.0\MovieCharacters.BLL.dll
+C:\Users\Oliver\Documents\GitRepositories\Noroff\Assignment7_MovieCharacters\MovieCharacters.BL\bin\Debug\net5.0\ref\MovieCharacters.BLL.dll
+C:\Users\Oliver\Documents\GitRepositories\Noroff\Assignment7_MovieCharacters\MovieCharacters.BL\bin\Debug\net5.0\MovieCharacters.BLL.pdb
+C:\Users\Oliver\Documents\GitRepositories\Noroff\Assignment7_MovieCharacters\MovieCharacters.BL\obj\Debug\net5.0\MovieCharacters.BLL.csproj.AssemblyReference.cache
+C:\Users\Oliver\Documents\GitRepositories\Noroff\Assignment7_MovieCharacters\MovieCharacters.BL\obj\Debug\net5.0\MovieCharacters.BLL.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Oliver\Documents\GitRepositories\Noroff\Assignment7_MovieCharacters\MovieCharacters.BL\obj\Debug\net5.0\MovieCharacters.BLL.AssemblyInfoInputs.cache
+C:\Users\Oliver\Documents\GitRepositories\Noroff\Assignment7_MovieCharacters\MovieCharacters.BL\obj\Debug\net5.0\MovieCharacters.BLL.AssemblyInfo.cs
+C:\Users\Oliver\Documents\GitRepositories\Noroff\Assignment7_MovieCharacters\MovieCharacters.BL\obj\Debug\net5.0\MovieCharacters.BLL.csproj.CoreCompileInputs.cache
+C:\Users\Oliver\Documents\GitRepositories\Noroff\Assignment7_MovieCharacters\MovieCharacters.BL\obj\Debug\net5.0\MovieCharacters.BLL.dll
+C:\Users\Oliver\Documents\GitRepositories\Noroff\Assignment7_MovieCharacters\MovieCharacters.BL\obj\Debug\net5.0\ref\MovieCharacters.BLL.dll
+C:\Users\Oliver\Documents\GitRepositories\Noroff\Assignment7_MovieCharacters\MovieCharacters.BL\obj\Debug\net5.0\MovieCharacters.BLL.pdb
