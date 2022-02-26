@@ -48,7 +48,7 @@ namespace MovieCharacters.DAL.Migrations
                     Director = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     MoviePosterUrl = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     TrailerUrl = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    FranchiseId = table.Column<int>(type: "int", nullable: false)
+                    FranchiseId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -58,31 +58,32 @@ namespace MovieCharacters.DAL.Migrations
                         column: x => x.FranchiseId,
                         principalTable: "Franchises",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.SetNull);
                 });
 
             migrationBuilder.CreateTable(
                 name: "CharacterMovie",
                 columns: table => new
                 {
-                    CharactersId = table.Column<int>(type: "int", nullable: false),
-                    MoviesId = table.Column<int>(type: "int", nullable: false)
+                    CharactersId = table.Column<int>(type: "int", nullable: true),  //--- manually edit: required to have Nullable FK
+                    MoviesId = table.Column<int>(type: "int", nullable: true)   //--- manually edit: required to have Nullable FK
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CharacterMovie", x => new { x.CharactersId, x.MoviesId });
+                    //--- table.PrimaryKey("PK_CharacterMovie", x => new { x.CharactersId, x.MoviesId });
+                    //--- manually edit: commented this out in order to make nullable FK constraint possible
                     table.ForeignKey(
                         name: "FK_CharacterMovie_Characters_CharactersId",
                         column: x => x.CharactersId,
                         principalTable: "Characters",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.SetNull);   //--- manually edit: required to have Nullable FK
                     table.ForeignKey(
                         name: "FK_CharacterMovie_Movies_MoviesId",
                         column: x => x.MoviesId,
                         principalTable: "Movies",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.SetNull);   //--- manually edit: required to have Nullable FK
                 });
 
             migrationBuilder.CreateIndex(

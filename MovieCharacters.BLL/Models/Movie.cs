@@ -32,13 +32,15 @@ namespace MovieCharacters.BLL.Models
         /// many-to-many relationship between Movies and characters
         /// One movie contains many characters and a character can play in multiple movies
         /// </summary>
-        public ICollection<Character> Characters { get; set; }
+#pragma warning disable CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
+        public virtual ICollection<Character>? Characters { get; set; }
+#pragma warning restore CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
 
         /// <summary>
         /// one-to-many relationship between franchise and movie
         /// One movie belongs to one franchise, but a franchise can contain many movies
         /// </summary>
-        public int FranchiseId { get; set; }
-        public Franchise Franchise { get; set; }
+        public int? FranchiseId { get; set; }
+        public virtual Franchise Franchise { get; set; }
     }
 }
