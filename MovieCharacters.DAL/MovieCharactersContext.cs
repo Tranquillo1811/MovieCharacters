@@ -1,17 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Design;
-using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using MovieCharacters.BLL.Models;
 
 namespace MovieCharacters.DAL
 {
     internal class MovieCharactersContext : DbContext
     {
+        public DbSet<Movie> Movies { get; set; }
+        public DbSet<Franchise> Franchises { get; set; }
+        public DbSet<Character> Characters { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             base.OnConfiguring(optionsBuilder);

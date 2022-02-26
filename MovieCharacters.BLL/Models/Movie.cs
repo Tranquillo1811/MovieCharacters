@@ -7,38 +7,38 @@ using System.Threading.Tasks;
 
 namespace MovieCharacters.BLL.Models
 {
-    internal class Movie
+    public class Movie
     {
         /// <summary>
         /// PrimaryKey
         /// </summary>
-        int Id { get; set; }
+        public int Id { get; set; }
 
         [Required]
         [MaxLength(100)]
-        string Title { get; set; }
+        public string Title { get; set; }
         [MaxLength(255)]
-        string Genres { get; set; }
+        public string Genres { get; set; }
         [Required]
-        int ReleaseYear { get; set; }
+        public int ReleaseYear { get; set; }
         [MaxLength(100)]
-        string Director { get; set; }
+        public string Director { get; set; }
         [MaxLength(255)]
-        string MoviePosterUrl { get; set; }
+        public string MoviePosterUrl { get; set; }
         [MaxLength(255)]
-        string TrailerUrl { get; set; }
+        public string TrailerUrl { get; set; }
 
         /// <summary>
         /// many-to-many relationship between Movies and characters
         /// One movie contains many characters and a character can play in multiple movies
         /// </summary>
-        ICollection<Character> Characters { get; set; }
+        public ICollection<Character> Characters { get; set; }
 
         /// <summary>
         /// one-to-many relationship between franchise and movie
         /// One movie belongs to one franchise, but a franchise can contain many movies
         /// </summary>
-        int FranchiseId { get; set; }
-        Franchise Franchise { get; set; }
+        public int FranchiseId { get; set; }
+        public Franchise Franchise { get; set; }
     }
 }

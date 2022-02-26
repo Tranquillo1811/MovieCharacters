@@ -7,26 +7,26 @@ using System.Threading.Tasks;
 
 namespace MovieCharacters.BLL.Models
 {
-    internal class Character
+    public class Character
     {
         /// <summary>
         /// PrimaryKey
         /// </summary>
-        int Id { get; set; }
+        public int Id { get; set; }
 
         [Required]
         [MaxLength(100)]
-        string FullName { get; set; }
+        public string FullName { get; set; }
         [MaxLength(255)]
-        string Alias { get; set; }
-        string Gender { get; set; }
+        public string Alias { get; set; }
+        public string Gender { get; set; }
         [MaxLength(255)]
-        string PictureUrl { get; set; }
+        public string PictureUrl { get; set; }
 
         /// <summary>
         /// many-to-many relationship between Movies and characters
         /// One movie contains many characters and a character can play in multiple movies
         /// </summary>
-        ICollection<Movie> Movies { get; set;}
+        public ICollection<Movie> Movies { get; set;}
     }
 }
