@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MovieCharacters.BLL.Models
 {
-    public class Franchise
+    public class Franchise : IFranchise 
     {
         /// <summary>
         /// PrimaryKey
@@ -24,8 +24,6 @@ namespace MovieCharacters.BLL.Models
         /// one-to-many relationship between franchise and movie
         /// One movie belongs to one franchise, but a franchise can contain many movies
         /// </summary>
-#pragma warning disable CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
-        public ICollection<Movie>? Movies { get; set; }
-#pragma warning restore CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
+        public ICollection<Movie> Movies { get; set; }
     }
 }

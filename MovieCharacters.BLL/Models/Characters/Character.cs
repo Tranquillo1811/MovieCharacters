@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace MovieCharacters.BLL.Models
 {
-    public class Character
+    public class Character : ICharacter
     {
         /// <summary>
         /// PrimaryKey
@@ -28,8 +28,6 @@ namespace MovieCharacters.BLL.Models
         /// many-to-many relationship between Movies and characters
         /// One movie contains many characters and a character can play in multiple movies
         /// </summary>
-#pragma warning disable CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
-        public ICollection<Movie>? Movies { get; set;}
-#pragma warning restore CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
+        public ICollection<Movie> Movies { get; set;}
     }
 }
