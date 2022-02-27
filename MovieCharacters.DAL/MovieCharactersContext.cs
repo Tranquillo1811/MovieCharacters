@@ -127,11 +127,6 @@ namespace MovieCharacters.DAL
                             new { MoviesId = 2, CharactersId = 3 },
                             new { MoviesId = 3, CharactersId = 3 });
                     });
-
-
-
-
-
         }
     }
 }
