@@ -10,10 +10,10 @@ namespace MovieCharacters.BLL.Models
     public interface IRepository<T> where T : class
     {
         T GetById(int id);
-        IEnumerable<T> GetAll();
-        IEnumerable<T> FindAll(Expression<Func<T, bool>> predicate);
-        bool Add(T entity);
-        bool Update(T entity);
-        bool Delete(T entity);
+        Task<IEnumerable<T>> GetAllAsync();
+        Task<IEnumerable<T>> FindAllAsync(Expression<Func<T, bool>> predicate);
+        Task<int> AddAsync(T entity);
+        Task<int> UpdateAsync(T entity);
+        Task<int> DeleteAsync(T entity);
     }
 }

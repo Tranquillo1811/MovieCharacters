@@ -25,7 +25,7 @@ namespace MovieCharacters.API.Controllers
         public async Task<ActionResult<IEnumerable<CharacterDto>>> GetAsync()
         {
             List<CharacterDto> characters = new();
-            var characterEntities = _characterRepository.GetAll();
+            var characterEntities = await _characterRepository.GetAllAsync();
             characters = _mapper.Map<List<CharacterDto>>(characterEntities);
             return Ok(characters);
         }

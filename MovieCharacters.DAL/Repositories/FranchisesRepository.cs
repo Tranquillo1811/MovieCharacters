@@ -10,22 +10,22 @@ namespace MovieCharacters.DAL.Repositories
 {
     public class FranchisesRepository : IFranchiseRepository
     {
-        public bool Add(IFranchise entity)
+        public Task<int> AddAsync(IFranchise entity)
         {
             throw new NotImplementedException();
         }
 
-        public bool Delete(IFranchise entity)
+        public Task<int> DeleteAsync(IFranchise entity)
         {
             throw new NotImplementedException();
         }
 
-        public IEnumerable<IFranchise> FindAll(Expression<Func<IFranchise, bool>> predicate)
+        public Task<IEnumerable<IFranchise>> FindAllAsync(Expression<Func<IFranchise, bool>> predicate)
         {
             throw new NotImplementedException();
         }
 
-        public IEnumerable<IFranchise> GetAll()
+        public Task<IEnumerable<IFranchise>> GetAllAsync()
         {
             throw new NotImplementedException();
         }
@@ -35,7 +35,7 @@ namespace MovieCharacters.DAL.Repositories
             throw new NotImplementedException();
         }
 
-        public bool Update(IFranchise entity)
+        public Task<int> UpdateAsync(IFranchise entity)
         {
             throw new NotImplementedException();
         }

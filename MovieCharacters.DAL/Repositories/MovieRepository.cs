@@ -8,24 +8,24 @@ using System.Threading.Tasks;
 
 namespace MovieCharacters.DAL.Repositories
 {
-    public class MovieRepository : MovieCharacters.BLL.Models.IMovieRepository
+    public class MovieRepository : IMovieRepository
     {
-        public bool Add(IMovie entity)
+        public Task<int> AddAsync(IMovie entity)
         {
             throw new NotImplementedException();
         }
 
-        public bool Delete(IMovie entity)
+        public Task<int> DeleteAsync(IMovie entity)
         {
             throw new NotImplementedException();
         }
 
-        public IEnumerable<IMovie> FindAll(Expression<Func<IMovie, bool>> predicate)
+        public Task<IEnumerable<IMovie>> FindAllAsync(Expression<Func<IMovie, bool>> predicate)
         {
             throw new NotImplementedException();
         }
 
-        public IEnumerable<IMovie> GetAll()
+        public Task<IEnumerable<IMovie>> GetAllAsync()
         {
             throw new NotImplementedException();
         }
@@ -35,7 +35,7 @@ namespace MovieCharacters.DAL.Repositories
             throw new NotImplementedException();
         }
 
-        public bool Update(IMovie entity)
+        public Task<int> UpdateAsync(IMovie entity)
         {
             throw new NotImplementedException();
         }

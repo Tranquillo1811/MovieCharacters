@@ -1,4 +1,5 @@
-﻿using MovieCharacters.BLL.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using MovieCharacters.BLL.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,27 +11,27 @@ namespace MovieCharacters.DAL.Repositories
 {
     public class CharacterRepository : ICharacterRepository
     {
-        public bool Add(ICharacter entity)
+        public Task<int> AddAsync(ICharacter entity)
         {
             throw new NotImplementedException();
         }
 
-        public bool Delete(ICharacter entity)
+        public Task<int> DeleteAsync(ICharacter entity)
         {
             throw new NotImplementedException();
         }
 
-        public IEnumerable<ICharacter> FindAll(Expression<Func<ICharacter, bool>> predicate)
+        public async Task<IEnumerable<ICharacter>> FindAllAsync(Expression<Func<ICharacter, bool>> predicate)
         {
             throw new NotImplementedException();
         }
 
-        public IEnumerable<ICharacter> GetAll()
+        public async Task<IEnumerable<ICharacter>> GetAllAsync()
         {
             List<ICharacter> characters = new ();
             using(MovieCharactersContext context = new ())
             {
-                characters = context.Characters.Cast<ICharacter>().ToList();
+                characters = await context.Characters.Cast<ICharacter>().ToListAsync();
             }
             return characters;
         }
@@ -40,7 +41,7 @@ namespace MovieCharacters.DAL.Repositories
             throw new NotImplementedException();
         }
 
-        public bool Update(ICharacter entity)
+        public Task<int> UpdateAsync(ICharacter entity)
         {
             throw new NotImplementedException();
         }
