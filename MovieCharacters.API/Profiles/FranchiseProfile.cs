@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using MovieCharacters.BLL.Models;
+using MovieCharacters.DAL.Models;
 using System.Linq;
 
 namespace MovieCharacters.API.Profiles
@@ -8,7 +9,8 @@ namespace MovieCharacters.API.Profiles
     {
         public FranchiseProfile()
         {
-            CreateMap<IFranchise, FranchiseDto>()
+            CreateMap<Franchise, FranchiseDto>()
+                .ForMember(fdto => fdto.Movies, opt => opt.MapFrom(f => f.Movies.Select(m => m.Id).ToArray()))
                 .ReverseMap();
         }
     }

@@ -16,5 +16,6 @@ namespace MovieCharacters.BLL.Models
         public string MoviePosterUrl { get; set; }
         public string TrailerUrl { get; set; }
         public int[] Characters { get; set; }
+        public int Franchise { get; set; }
     }
 }
