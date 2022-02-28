@@ -8,10 +8,7 @@ namespace MovieCharacters.API.Profiles
     {
         public MovieProfile()
         {
-            CreateMap<Movie, MovieDto>()
-                .ForMember(mdto => mdto.Characters,
-                    opt => opt.MapFrom(m => m.Characters.Select(character => character.Id))
-                )
+            CreateMap<IMovie, MovieDto>()
                 .ReverseMap();
         }
     }

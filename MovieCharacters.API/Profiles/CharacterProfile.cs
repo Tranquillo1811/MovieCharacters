@@ -9,10 +9,7 @@ namespace MovieCharacters.API.Profiles
     {
         public CharacterProfile()
         {
-            CreateMap<Character, CharacterDto>()
-                .ForMember(cdto => cdto.Movies, 
-                    opt => opt.MapFrom(c => c.Movies.Select(c => c.Id))
-                )
+            CreateMap<ICharacter, CharacterDto>()
                 .ReverseMap();
         }
 

@@ -28,6 +28,7 @@ namespace MovieCharactersAPI
         {
 
             services.AddControllers();
+            services.AddAutoMapper(typeof(Startup));
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "MovieCharactersAPI", Version = "v1" });

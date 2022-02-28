@@ -1,12 +1,8 @@
-﻿using System;
+﻿using MovieCharacters.BLL.Models;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace MovieCharacters.BLL.Models
+namespace MovieCharacters.DAL.Models
 {
     public class Character : ICharacter
     {

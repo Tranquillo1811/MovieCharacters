@@ -10,12 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\MovieCharacters.BLL\MovieCharacters.BLL.csproj" />
-    <ProjectReference Include="..\MovieCharacters.DAL\MovieCharacters.DAL.csproj" />
   </ItemGroup>
 
 </Project>
