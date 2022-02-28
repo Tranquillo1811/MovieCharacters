@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using MovieCharacters.BLL.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -11,13 +12,22 @@ namespace MovieCharacters.API.Controllers
     [ApiController]
     public class CharactersController : ControllerBase
     {
+        private readonly ICharacterRepository _characterRepository;
+        private readonly IMapper _mapper;
+        public CharactersController(ICharacterRepository characterRepository, IMapper mapper)
+        {
+            _characterRepository = characterRepository;
+            _mapper = mapper;
+        }
+
         // GET: api/<CharactersController>
         [HttpGet]
-        public async Task<IEnumerable<CharacterDto>> GetAsync()
+        public async Task<ActionResult<IEnumerable<CharacterDto>>> GetAsync()
         {
             List<CharacterDto> characters = new();
-
-            return characters;
+            var characterEntities = _characterRepository.GetAll();
+            characters = _mapper.Map<List<CharacterDto>>(characterEntities);
+            return Ok(characters);
         }
 
         // GET api/<CharactersController>/2

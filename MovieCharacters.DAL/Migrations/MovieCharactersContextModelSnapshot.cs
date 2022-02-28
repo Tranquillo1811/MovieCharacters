@@ -81,7 +81,7 @@ namespace MovieCharacters.DAL.Migrations
                         });
                 });
 
-            modelBuilder.Entity("MovieCharacters.BLL.Models.Character", b =>
+            modelBuilder.Entity("MovieCharacters.DAL.Models.Character", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -133,7 +133,7 @@ namespace MovieCharacters.DAL.Migrations
                         });
                 });
 
-            modelBuilder.Entity("MovieCharacters.BLL.Models.Franchise", b =>
+            modelBuilder.Entity("MovieCharacters.DAL.Models.Franchise", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -162,7 +162,7 @@ namespace MovieCharacters.DAL.Migrations
                         });
                 });
 
-            modelBuilder.Entity("MovieCharacters.BLL.Models.Movie", b =>
+            modelBuilder.Entity("MovieCharacters.DAL.Models.Movie", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -240,29 +240,29 @@ namespace MovieCharacters.DAL.Migrations
 
             modelBuilder.Entity("CharacterMovie", b =>
                 {
-                    b.HasOne("MovieCharacters.BLL.Models.Character", null)
+                    b.HasOne("MovieCharacters.DAL.Models.Character", null)
                         .WithMany()
                         .HasForeignKey("CharactersId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MovieCharacters.BLL.Models.Movie", null)
+                    b.HasOne("MovieCharacters.DAL.Models.Movie", null)
                         .WithMany()
                         .HasForeignKey("MoviesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("MovieCharacters.BLL.Models.Movie", b =>
+            modelBuilder.Entity("MovieCharacters.DAL.Models.Movie", b =>
                 {
-                    b.HasOne("MovieCharacters.BLL.Models.Franchise", "Franchise")
+                    b.HasOne("MovieCharacters.DAL.Models.Franchise", "Franchise")
                         .WithMany("Movies")
                         .HasForeignKey("FranchiseId");
 
                     b.Navigation("Franchise");
                 });
 
-            modelBuilder.Entity("MovieCharacters.BLL.Models.Franchise", b =>
+            modelBuilder.Entity("MovieCharacters.DAL.Models.Franchise", b =>
                 {
                     b.Navigation("Movies");
                 });

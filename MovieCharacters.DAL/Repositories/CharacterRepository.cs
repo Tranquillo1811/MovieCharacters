@@ -1,12 +1,12 @@
-﻿using System;
+﻿using MovieCharacters.BLL.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
-using MovieCharacters.BLL.Models;
 
-namespace MovieCharacters.DAL.Models
+namespace MovieCharacters.DAL.Repositories
 {
     public class CharacterRepository : ICharacterRepository
     {
@@ -27,10 +27,10 @@ namespace MovieCharacters.DAL.Models
 
         public IEnumerable<ICharacter> GetAll()
         {
-            List<Character> characters = new ();
+            List<ICharacter> characters = new ();
             using(MovieCharactersContext context = new ())
             {
-                characters = context.Characters.ToList();
+                characters = context.Characters.Cast<ICharacter>().ToList();
             }
             return characters;
         }

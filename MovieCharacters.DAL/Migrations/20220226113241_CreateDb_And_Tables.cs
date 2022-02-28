@@ -65,25 +65,24 @@ namespace MovieCharacters.DAL.Migrations
                 name: "CharacterMovie",
                 columns: table => new
                 {
-                    CharactersId = table.Column<int>(type: "int", nullable: true),  //--- manually edit: required to have Nullable FK
-                    MoviesId = table.Column<int>(type: "int", nullable: true)   //--- manually edit: required to have Nullable FK
+                    CharactersId = table.Column<int>(type: "int", nullable: false),
+                    MoviesId = table.Column<int>(type: "int", nullable: false) 
                 },
                 constraints: table =>
                 {
-                    //--- table.PrimaryKey("PK_CharacterMovie", x => new { x.CharactersId, x.MoviesId });
-                    //--- manually edit: commented this out in order to make nullable FK constraint possible
+                    table.PrimaryKey("PK_CharacterMovie", x => new { x.CharactersId, x.MoviesId });
                     table.ForeignKey(
                         name: "FK_CharacterMovie_Characters_CharactersId",
                         column: x => x.CharactersId,
                         principalTable: "Characters",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.SetNull);   //--- manually edit: required to have Nullable FK
+                        onDelete: ReferentialAction.Cascade);   //--- manually edit: required to have Nullable FK
                     table.ForeignKey(
                         name: "FK_CharacterMovie_Movies_MoviesId",
                         column: x => x.MoviesId,
                         principalTable: "Movies",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.SetNull);   //--- manually edit: required to have Nullable FK
+                        onDelete: ReferentialAction.Cascade);   //--- manually edit: required to have Nullable FK
                 });
 
             migrationBuilder.CreateIndex(
