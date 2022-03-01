@@ -10,7 +10,7 @@ namespace MovieCharacters.DAL.Repositories
 {
     public class FranchisesRepository : IFranchiseRepository
     {
-        public Task<int> AddAsync(IFranchise entity)
+        public Task<IFranchise> AddAsync(IFranchise entity)
         {
             throw new NotImplementedException();
         }
