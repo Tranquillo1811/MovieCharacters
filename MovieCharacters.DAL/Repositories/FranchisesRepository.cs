@@ -5,39 +5,86 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using MovieCharacters.DAL.Models;
 
 namespace MovieCharacters.DAL.Repositories
 {
     public class FranchisesRepository : IFranchiseRepository
     {
-        public Task<IFranchise> AddAsync(IFranchise entity)
+        public async Task<IFranchise> AddAsync(IFranchise entity)
         {
-            throw new NotImplementedException();
+            IFranchise result;
+            using (MovieCharactersContext context = new())
+            {
+                result = (IFranchise)await context.AddAsync(entity);
+                await context.SaveChangesAsync();
+            }
+            return result;
         }
 
-        public Task<int> DeleteAsync(IFranchise entity)
+        public async Task<int> DeleteAsync(IFranchise entity)
         {
-            throw new NotImplementedException();
+            using (MovieCharactersContext context = new ())
+            {
+                var _franchise = (IFranchise)await context.FindAsync(typeof(IFranchise), entity.Id);
+                if (_franchise != null)
+                {
+                    context.Remove(_franchise);
+                    await context.SaveChangesAsync();
+                }
+            }
+
+            return entity.Id;
         }
 
-        public Task<IEnumerable<IFranchise>> FindAllAsync(Expression<Func<IFranchise, bool>> predicate)
+        public async Task<IEnumerable<IFranchise>> FindAllAsync(Expression<Func<IFranchise, bool>> predicate)
         {
-            throw new NotImplementedException();
+            List<Franchise> result = new List<Franchise>();
+
+            using (MovieCharactersContext context = new())
+            {
+                result = await context.Franchises
+                    .Include(f => f.Movies).ToListAsync();
+            }
+
+            return result;
         }
 
-        public Task<IEnumerable<IFranchise>> GetAllAsync()
+        public async Task<IEnumerable<IFranchise>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            List<Franchise> result = new List<Franchise>();
+
+            using (MovieCharactersContext context = new())
+            {
+                result = await context.Franchises
+                    .Include(f => f.Movies).ToListAsync();
+            }
+
+            return result;
         }
 
-        public Task<IFranchise> GetByIdAsync(int id)
+        public async Task<IFranchise> GetByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            IFranchise franchise = new Franchise();
+
+            using (MovieCharactersContext context = new())
+            {
+                franchise = (IFranchise)await context.FindAsync(typeof(IFranchise), id);
+            }
+
+            return franchise;
         }
 
-        public Task<int> UpdateAsync(IFranchise entity)
+        public async Task<int> UpdateAsync(IFranchise entity)
         {
-            throw new NotImplementedException();
+            using (MovieCharactersContext context = new())
+            {
+                context.Entry(entity).State = EntityState.Modified;
+                await context.SaveChangesAsync();
+            }
+
+            return entity.Id;
         }
     }
 }

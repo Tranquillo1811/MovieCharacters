@@ -8,5 +8,6 @@ namespace MovieCharacters.BLL.Models
 {
     public interface IFranchiseRepository : IRepository<IFranchise>
     {
+       
     }
 }
