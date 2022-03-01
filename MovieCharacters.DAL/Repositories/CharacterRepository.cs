@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MovieCharacters.BLL.Models;
+using MovieCharacters.DAL.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,9 +12,14 @@ namespace MovieCharacters.DAL.Repositories
 {
     public class CharacterRepository : ICharacterRepository
     {
-        public Task<int> AddAsync(ICharacter entity)
+        public async Task<ICharacter> AddAsync(ICharacter entity)
         {
-            throw new NotImplementedException();
+            ICharacter result;
+            using (MovieCharactersContext context = new())
+            {
+                result = (ICharacter)await context.Characters.AddAsync((Character)entity);
+            }
+            return result;
         }
 
         public Task<int> DeleteAsync(ICharacter entity)
