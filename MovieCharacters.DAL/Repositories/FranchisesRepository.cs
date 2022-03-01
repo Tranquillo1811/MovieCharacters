@@ -30,7 +30,7 @@ namespace MovieCharacters.DAL.Repositories
             throw new NotImplementedException();
         }
 
-        public IFranchise GetById(int id)
+        public Task<IFranchise> GetByIdAsync(int id)
         {
             throw new NotImplementedException();
         }

@@ -30,7 +30,7 @@ namespace MovieCharacters.DAL.Repositories
             throw new NotImplementedException();
         }
 
-        public IMovie GetById(int id)
+        public Task<IMovie> GetByIdAsync(int id)
         {
             throw new NotImplementedException();
         }

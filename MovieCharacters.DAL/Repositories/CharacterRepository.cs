@@ -36,9 +36,14 @@ namespace MovieCharacters.DAL.Repositories
             return characters;
         }
 
-        public ICharacter GetById(int id)
+        public async Task<ICharacter> GetByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            ICharacter character;
+            using (MovieCharactersContext context = new())
+            {
+                character = await context.Characters.FindAsync(id);
+            }
+            return character;
         }
 
         public Task<int> UpdateAsync(ICharacter entity)

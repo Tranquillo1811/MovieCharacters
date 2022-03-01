@@ -34,7 +34,8 @@ namespace MovieCharacters.API.Controllers
         [HttpGet("{id}")]
         public async Task<CharacterDto> GetAsync(int id)
         {
-            CharacterDto character = new ();
+            CharacterDto character;
+            character = _mapper.Map<CharacterDto>(await _characterRepository.GetByIdAsync(id));
             return character;
         }
 
