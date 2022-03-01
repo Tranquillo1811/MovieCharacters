@@ -46,7 +46,7 @@ namespace MovieCharacters.API.Controllers
         {
             ICharacter character = _mapper.Map<Character>(value);
             ICharacter result = await _characterRepository.AddAsync(character);
-            CharacterDto resultDto = _mapper.Map<CharacterDto>(result);
+            CharacterDto resultDto = _mapper.Map<CharacterDto>((Character)result);
             return Ok(resultDto);
         }
 

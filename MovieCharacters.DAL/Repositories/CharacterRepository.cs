@@ -14,12 +14,13 @@ namespace MovieCharacters.DAL.Repositories
     {
         public async Task<ICharacter> AddAsync(ICharacter entity)
         {
-            ICharacter result;
+            Character characterResult;
             using (MovieCharactersContext context = new())
             {
-                result = (ICharacter)await context.Characters.AddAsync((Character)entity);
+                characterResult = (await context.Characters.AddAsync((Character)entity)).Entity;
+                int intResult = await context.SaveChangesAsync();
             }
-            return result;
+            return characterResult;
         }
 
         public Task<int> DeleteAsync(ICharacter entity)
@@ -52,7 +53,7 @@ namespace MovieCharacters.DAL.Repositories
             return character;
         }
 
-        public Task<int> UpdateAsync(ICharacter entity)
+        public Task<ICharacter> UpdateAsync(ICharacter entity)
         {
             throw new NotImplementedException();
         }

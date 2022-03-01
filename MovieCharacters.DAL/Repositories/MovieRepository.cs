@@ -35,7 +35,7 @@ namespace MovieCharacters.DAL.Repositories
             throw new NotImplementedException();
         }
 
-        public Task<int> UpdateAsync(IMovie entity)
+        public Task<IMovie> UpdateAsync(IMovie entity)
         {
             throw new NotImplementedException();
         }

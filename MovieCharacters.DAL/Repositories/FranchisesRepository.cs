@@ -35,7 +35,7 @@ namespace MovieCharacters.DAL.Repositories
             throw new NotImplementedException();
         }
 
-        public Task<int> UpdateAsync(IFranchise entity)
+        public Task<IFranchise> UpdateAsync(IFranchise entity)
         {
             throw new NotImplementedException();
         }
