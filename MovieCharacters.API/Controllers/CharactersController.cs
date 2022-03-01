@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using MovieCharacters.BLL.Models;
+using MovieCharacters.DAL.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -40,8 +41,12 @@ namespace MovieCharacters.API.Controllers
 
         // POST api/<CharactersController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<ActionResult<CharacterDto>> Post([FromBody] CharacterDto value)
         {
+            ICharacter character = _mapper.Map<Character>(value);
+            ICharacter result = await _characterRepository.AddAsync(character);
+            CharacterDto resultDto = _mapper.Map<CharacterDto>(result);
+            return Ok(resultDto);
         }
 
         // PUT api/<CharactersController>/5
