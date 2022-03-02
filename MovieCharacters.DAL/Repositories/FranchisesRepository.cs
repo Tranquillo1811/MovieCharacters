@@ -15,7 +15,7 @@ namespace MovieCharacters.DAL.Repositories
             throw new NotImplementedException();
         }
 
-        public Task<int> DeleteAsync(Franchise entity)
+        public Task<int> DeleteByIdAsync(int entityId)
         {
             throw new NotImplementedException();
         }

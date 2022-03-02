@@ -108,9 +108,22 @@ namespace MovieCharacters.API.Controllers
         }
 
         // DELETE api/<CharactersController>/5
+        /// <summary>
+        /// deletes the character with the respective Id
+        /// </summary>
+        /// <param name="id">Id of the character to be deleted</param>
+        /// <returns>200 if character has been deleted or 204 if character wasn't present at all</returns>
+        [Consumes(MediaTypeNames.Text.Plain)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<ActionResult> DeleteById(int id)
         {
+            Character characterBll = await _characterRepository.GetByIdAsync(id);
+            if (characterBll == null)
+                return NoContent();
+            await _characterRepository.DeleteByIdAsync(id);
+            return Ok();
         }
     }
 }

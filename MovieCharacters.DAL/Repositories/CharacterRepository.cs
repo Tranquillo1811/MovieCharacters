@@ -18,18 +18,43 @@ namespace MovieCharacters.DAL.Repositories
         /// <returns>newly added character</returns>
         public async Task<Character> AddAsync(Character entity)
         {
-            Character characterResult;
+            Character characterResult = null;
             using (MovieCharactersContext context = new())
             {
-                characterResult = (await context.Characters.AddAsync(entity)).Entity;
-                int intResult = await context.SaveChangesAsync();
+                try
+                {
+                    characterResult = (await context.Characters.AddAsync(entity)).Entity;
+                    int intResult = await context.SaveChangesAsync();
+                }
+                catch (Exception ex)
+                {
+                    //TODO: not quite sure, how to actually handle this...
+                }
             }
             return characterResult;
         }
 
-        public Task<int> DeleteAsync(Character entity)
+        /// <summary>
+        /// deletes Character with respective Id
+        /// </summary>
+        /// <param name="CharacterId">id of the character to be deleted</param>
+        /// <returns>id of the deleted character</returns>
+        public async Task<int> DeleteByIdAsync(int CharacterId)
         {
-            throw new NotImplementedException();
+            Character deleteCharcter = await GetByIdAsync(CharacterId);
+            using(MovieCharactersContext context = new())
+            {
+                try
+                {
+                    context.Characters.Remove(deleteCharcter);
+                    await context.SaveChangesAsync();
+                }
+                catch(Exception ex)
+                {
+                    //TODO: not quite sure, how to actually handle this...
+                }
+            }
+            return CharacterId;
         }
 
         public async Task<IEnumerable<Character>> FindAllAsync(Expression<Func<Character, bool>> predicate)
@@ -46,7 +71,14 @@ namespace MovieCharacters.DAL.Repositories
             List<Character> characters = new ();
             using(MovieCharactersContext context = new ())
             {
-                characters = await context.Characters.Cast<Character>().ToListAsync();
+                try
+                {
+                    characters = await context.Characters.Cast<Character>().ToListAsync();
+                }
+                catch(Exception ex)
+                {
+                    //TODO: not quite sure, how to actually handle this...
+                }
             }
             return characters;
         }
@@ -58,10 +90,17 @@ namespace MovieCharacters.DAL.Repositories
         /// <returns>Character with given id or null if no such character exists</returns>
         public async Task<Character> GetByIdAsync(int id)
         {
-            Character character;
+            Character character = null;
             using (MovieCharactersContext context = new())
             {
-                character = await context.Characters.FindAsync(id);
+                try
+                {
+                    character = await context.Characters.FindAsync(id);
+                }
+                catch (Exception ex)
+                {
+                    //TODO: not quite sure, how to actually handle this...
+                }
             }
             return character;
         }
@@ -77,7 +116,15 @@ namespace MovieCharacters.DAL.Repositories
             Character characterResult;
             using (MovieCharactersContext context = new())
             {
-                Character editCharacter = context.Characters.Find(entity.Id);
+                Character editCharacter = null;
+                try
+                {
+                    editCharacter = context.Characters.Find(entity.Id);
+                }
+                catch(Exception ex)
+                {
+                    //TODO: not quite sure, how to actually handle this...
+                }
                 if (editCharacter == null)
                     return null;
                 //--- change all properties
@@ -86,7 +133,16 @@ namespace MovieCharacters.DAL.Repositories
                 editCharacter.PictureUrl = entity.PictureUrl;
                 editCharacter.Gender = entity.Gender;
                 editCharacter.Movies = ((Character)entity).Movies;
-                int intResult = await context.SaveChangesAsync();
+                int intResult = 0;
+                try
+                {
+                    intResult = await context.SaveChangesAsync();
+                }
+                catch (Exception ex)
+                {
+                    //TODO: not quite sure, how to actually handle this...
+                }
+
                 if (intResult == 0)
                     return null;
                 characterResult = editCharacter;
