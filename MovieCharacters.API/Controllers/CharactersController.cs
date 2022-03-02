@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MovieCharacters.BLL.Models;
-using MovieCharacters.DAL.Models;
 using System.Collections.Generic;
 using System.Net.Mime;
 using System.Threading.Tasks;
@@ -54,7 +53,7 @@ namespace MovieCharacters.API.Controllers
         public async Task<ActionResult<CharacterDto>> GetAsyncById(int id)
         {
             CharacterDto character;
-            ICharacter characterBLL = await _characterRepository.GetByIdAsync(id);
+            Character characterBLL = await _characterRepository.GetByIdAsync(id);
             if(characterBLL == null)
                 return NotFound();
             character = _mapper.Map<CharacterDto>(await _characterRepository.GetByIdAsync(id));
@@ -72,8 +71,8 @@ namespace MovieCharacters.API.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         public async Task<ActionResult<CharacterDto>> Post([FromBody] CharacterDto value)
         {
-            ICharacter characterBll = _mapper.Map<Character>(value);
-            ICharacter result = await _characterRepository.AddAsync(characterBll);
+            Character characterBll = _mapper.Map<Character>(value);
+            Character result = await _characterRepository.AddAsync(characterBll);
             CharacterDto resultDto = _mapper.Map<CharacterDto>((Character)result);
             return CreatedAtAction(nameof(GetAsyncById), new { id = result.Id }, resultDto);
         }
@@ -95,12 +94,15 @@ namespace MovieCharacters.API.Controllers
         {
             if (id != value.Id)
                 return BadRequest();
-            ICharacter characterBll = _mapper.Map<Character>(value);
-            ICharacter currentCharacter = await _characterRepository.GetByIdAsync(id);
+            Character characterBll = _mapper.Map<Character>(value);
+            Character currentCharacter = await _characterRepository.GetByIdAsync(id);
             if (currentCharacter == null)   //--- if characterId doesn't exist
                 return NotFound();
-
-            ICharacter result = await _characterRepository.UpdateAsync(characterBll);
+            if (currentCharacter.PictureUrl == characterBll.PictureUrl 
+                &&
+                currentCharacter.PictureUrl == characterBll.PictureUrl)
+            { }
+            Character result = await _characterRepository.UpdateAsync(characterBll);
             CharacterDto resultDto = _mapper.Map<CharacterDto>((Character)result);
             return NoContent();
         }

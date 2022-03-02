@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MovieCharacters.BLL.Models
 {
-    public interface ICharacterRepository : IRepository<ICharacter>
+    public interface ICharacterRepository : IRepository<Character>
     {
 
     }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MovieCharacters.BLL.Models
 {
-    public interface IFranchiseRepository : IRepository<IFranchise>
+    public interface IFranchiseRepository : IRepository<Franchise>
     {
     }
 }

@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MovieCharacters.BLL.Models;
-using MovieCharacters.DAL.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,23 +16,23 @@ namespace MovieCharacters.DAL.Repositories
         /// </summary>
         /// <param name="entity">Character to be added to the Db</param>
         /// <returns>newly added character</returns>
-        public async Task<ICharacter> AddAsync(ICharacter entity)
+        public async Task<Character> AddAsync(Character entity)
         {
             Character characterResult;
             using (MovieCharactersContext context = new())
             {
-                characterResult = (await context.Characters.AddAsync((Character)entity)).Entity;
+                characterResult = (await context.Characters.AddAsync(entity)).Entity;
                 int intResult = await context.SaveChangesAsync();
             }
             return characterResult;
         }
 
-        public Task<int> DeleteAsync(ICharacter entity)
+        public Task<int> DeleteAsync(Character entity)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<IEnumerable<ICharacter>> FindAllAsync(Expression<Func<ICharacter, bool>> predicate)
+        public async Task<IEnumerable<Character>> FindAllAsync(Expression<Func<Character, bool>> predicate)
         {
             throw new NotImplementedException();
         }
@@ -42,12 +41,12 @@ namespace MovieCharacters.DAL.Repositories
         /// gets all characters from Db
         /// </summary>
         /// <returns>List of all characters from Character Db table</returns>
-        public async Task<IEnumerable<ICharacter>> GetAllAsync()
+        public async Task<IEnumerable<Character>> GetAllAsync()
         {
-            List<ICharacter> characters = new ();
+            List<Character> characters = new ();
             using(MovieCharactersContext context = new ())
             {
-                characters = await context.Characters.Cast<ICharacter>().ToListAsync();
+                characters = await context.Characters.Cast<Character>().ToListAsync();
             }
             return characters;
         }
@@ -57,9 +56,9 @@ namespace MovieCharacters.DAL.Repositories
         /// </summary>
         /// <param name="id">id of the character to be selected</param>
         /// <returns>Character with given id or null if no such character exists</returns>
-        public async Task<ICharacter> GetByIdAsync(int id)
+        public async Task<Character> GetByIdAsync(int id)
         {
-            ICharacter character;
+            Character character;
             using (MovieCharactersContext context = new())
             {
                 character = await context.Characters.FindAsync(id);
@@ -73,7 +72,7 @@ namespace MovieCharacters.DAL.Repositories
         /// <param name="entity">character to be updated</param>
         /// <returns>updated character</returns>
         /// <exception cref="NotImplementedException"></exception>
-        public async Task<ICharacter> UpdateAsync(ICharacter entity)
+        public async Task<Character> UpdateAsync(Character entity)
         {
             Character characterResult;
             using (MovieCharactersContext context = new())

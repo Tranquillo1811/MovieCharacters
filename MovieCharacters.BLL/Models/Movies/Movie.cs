@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
-namespace MovieCharacters.DAL.Models
+namespace MovieCharacters.BLL.Models
 {
-    public class Movie : IMovie
+    public class Movie
     {
         /// <summary>
         /// PrimaryKey

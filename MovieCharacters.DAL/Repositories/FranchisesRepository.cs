@@ -10,32 +10,32 @@ namespace MovieCharacters.DAL.Repositories
 {
     public class FranchisesRepository : IFranchiseRepository
     {
-        public Task<IFranchise> AddAsync(IFranchise entity)
+        public Task<Franchise> AddAsync(Franchise entity)
         {
             throw new NotImplementedException();
         }
 
-        public Task<int> DeleteAsync(IFranchise entity)
+        public Task<int> DeleteAsync(Franchise entity)
         {
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<IFranchise>> FindAllAsync(Expression<Func<IFranchise, bool>> predicate)
+        public Task<IEnumerable<Franchise>> FindAllAsync(Expression<Func<Franchise, bool>> predicate)
         {
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<IFranchise>> GetAllAsync()
+        public Task<IEnumerable<Franchise>> GetAllAsync()
         {
             throw new NotImplementedException();
         }
 
-        public Task<IFranchise> GetByIdAsync(int id)
+        public Task<Franchise> GetByIdAsync(int id)
         {
             throw new NotImplementedException();
         }
 
-        public Task<IFranchise> UpdateAsync(IFranchise entity)
+        public Task<Franchise> UpdateAsync(Franchise entity)
         {
             throw new NotImplementedException();
         }
