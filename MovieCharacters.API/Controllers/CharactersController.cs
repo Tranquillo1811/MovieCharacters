@@ -90,7 +90,7 @@ namespace MovieCharacters.API.Controllers
         [ProducesResponseType(StatusCodes.Status304NotModified)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<ActionResult<CharacterDto>> Put(int id, [FromBody] CharacterDto value)
+        public async Task<ActionResult> Put(int id, [FromBody] CharacterDto value)
         {
             if (id != value.Id)
                 return BadRequest();
@@ -98,12 +98,12 @@ namespace MovieCharacters.API.Controllers
             Character currentCharacter = await _characterRepository.GetByIdAsync(id);
             if (currentCharacter == null)   //--- if characterId doesn't exist
                 return NotFound();
-            if (currentCharacter.PictureUrl == characterBll.PictureUrl 
-                &&
-                currentCharacter.PictureUrl == characterBll.PictureUrl)
-            { }
+            if (currentCharacter.Equals(characterBll))  //--- if nothing was actually changed
+            {
+                CharacterDto characterDto = _mapper.Map<CharacterDto>(characterBll);
+                return StatusCode(StatusCodes.Status304NotModified, characterDto);
+            }
             Character result = await _characterRepository.UpdateAsync(characterBll);
-            CharacterDto resultDto = _mapper.Map<CharacterDto>((Character)result);
             return NoContent();
         }
 

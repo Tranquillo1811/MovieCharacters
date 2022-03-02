@@ -27,7 +27,7 @@ namespace MovieCharactersAPI
             services.AddControllers();
             services.AddAutoMapper(typeof(Startup));
 
-            services.Add(new ServiceDescriptor(typeof(CharacterRepository), new CharacterRepository()));
+            services.Add(new ServiceDescriptor(typeof(ICharacterRepository), new CharacterRepository()));
 
             services.AddSwaggerGen(c =>
             {
@@ -39,7 +39,7 @@ namespace MovieCharactersAPI
                     TermsOfService = new Uri("https://github.com/Tranquillo1811/MovieCharacters"),
                     Contact = new OpenApiContact
                     {
-                        Name = "Oliver Hauck",
+                        Name = "Odysseus beratis & Oliver Hauck",
                         Url = new Uri("https://github.com/Tranquillo1811")
                     },
                     License = new OpenApiLicense
