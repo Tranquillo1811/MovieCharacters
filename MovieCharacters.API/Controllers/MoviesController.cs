@@ -22,7 +22,12 @@ namespace MovieCharacters.API.Controllers
             _mapper = mapper;
         }
 
-        // GET api/<MoviesController>
+        /// <summary>
+        /// Get a list of all movies
+        /// </summary>
+        /// <returns>List of each movie details</returns>
+        [HttpGet]
+        [ProducesResponseType(200)]
         public async Task<ActionResult<IEnumerable<MovieDto>>> GetAsync()
         {
             List<MovieDto> movies = new();
@@ -31,15 +36,24 @@ namespace MovieCharacters.API.Controllers
             return Ok(movies);
         }
 
-        // GET api/<MoviesController>/2
+        /// <summary>
+        /// Get a specific movie from database
+        /// </summary>
+        /// <param name="id">Movie unique id</param>
+        /// <returns>Movie details as a class object</returns>
         [HttpGet("{id}")]
+        [ProducesResponseType(200)]
         public async Task<MovieDto> GetAsync(int id)
         {
             MovieDto movie = _mapper.Map<MovieDto>(await _movieRepository.GetByIdAsync(id));
             return movie;
         }
 
-        // POST api/<MoviesController>
+        /// <summary>
+        /// Add a new movie to the database
+        /// </summary>
+        /// <param name="value">Movie object with all details</param>
+        /// <returns>True if a movie was inserted successfully</returns>
         [HttpPost]
         public async Task<ActionResult<MovieDto>> Post([FromBody] MovieDto value)
         {

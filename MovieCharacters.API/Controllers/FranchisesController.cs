@@ -22,7 +22,12 @@ namespace MovieCharacters.API.Controllers
             _mapper = mapper;
         }
 
-        // GET api/<FranchisesController>
+        /// <summary>
+        /// Get a list of all franchises
+        /// </summary>
+        /// <returns>List of each franchise details</returns>
+        [HttpGet]
+        [ProducesResponseType(200)]
         public async Task<ActionResult<IEnumerable<FranchiseDto>>> GetAsync()
         {
             List<FranchiseDto> franchises = new();
@@ -31,15 +36,24 @@ namespace MovieCharacters.API.Controllers
             return Ok(franchises);
         }
 
-        // GET api/<FranchisesController>/2
+        /// <summary>
+        /// Get a specific franchise from database
+        /// </summary>
+        /// <param name="id">Franchise unique id</param>
+        /// <returns>Franchise details as a class object</returns>
         [HttpGet("{id}")]
+        [ProducesResponseType(200)]
         public async Task<FranchiseDto> GetAsync(int id)
         {
             FranchiseDto franchise = _mapper.Map<FranchiseDto>(await _franchiseRepository.GetByIdAsync(id));
             return franchise;
         }
 
-        // POST api/<FranchisesController>
+        /// <summary>
+        /// Add a new franchise to the database 
+        /// </summary>
+        /// <param name="value">Franchise object with all details</param>
+        /// <returns>True if a franchise was inserted successfully</returns>
         [HttpPost]
         public async Task<ActionResult<FranchiseDto>> Post([FromBody] FranchiseDto value)
         {

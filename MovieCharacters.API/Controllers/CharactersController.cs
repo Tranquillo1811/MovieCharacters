@@ -21,8 +21,12 @@ namespace MovieCharacters.API.Controllers
             _mapper = mapper;
         }
 
-        // GET: api/<CharactersController>
+        /// <summary>
+        /// Get a list of all characters
+        /// </summary>
+        /// <returns>List of each character details</returns>
         [HttpGet]
+        [ProducesResponseType(200)]
         public async Task<ActionResult<IEnumerable<CharacterDto>>> GetAsync()
         {
             List<CharacterDto> characters = new();
@@ -31,8 +35,13 @@ namespace MovieCharacters.API.Controllers
             return Ok(characters);
         }
 
-        // GET api/<CharactersController>/2
+        /// <summary>
+        /// Get a specific character from database
+        /// </summary>
+        /// <param name="id">Character unique id</param>
+        /// <returns>Character details as a class object</returns>
         [HttpGet("{id}")]
+        [ProducesResponseType(200)]
         public async Task<CharacterDto> GetAsync(int id)
         {
             CharacterDto character;
@@ -40,7 +49,11 @@ namespace MovieCharacters.API.Controllers
             return character;
         }
 
-        // POST api/<CharactersController>
+        /// <summary>
+        /// Add a new character to the database
+        /// </summary>
+        /// <param name="value">Character object with all details</param>
+        /// <returns>True if a character was inserted successfully</returns>
         [HttpPost]
         public async Task<ActionResult<CharacterDto>> Post([FromBody] CharacterDto value)
         {
