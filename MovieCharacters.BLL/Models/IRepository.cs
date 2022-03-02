@@ -13,7 +13,7 @@ namespace MovieCharacters.BLL.Models
         Task<IEnumerable<T>> GetAllAsync();
         Task<IEnumerable<T>> FindAllAsync(Expression<Func<T, bool>> predicate);
         Task<T> AddAsync(T entity);
-        Task<int> UpdateAsync(T entity);
+        Task<T> UpdateAsync(T entity);
         Task<int> DeleteAsync(T entity);
     }
 }

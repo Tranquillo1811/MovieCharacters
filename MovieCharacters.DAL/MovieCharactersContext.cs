@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using MovieCharacters.DAL.Models;
+using MovieCharacters.BLL.Models;
 using System.Collections.Generic;
 
 namespace MovieCharacters.DAL

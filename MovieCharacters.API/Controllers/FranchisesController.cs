@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using AutoMapper;
 using MovieCharacters.BLL.Models;
-using MovieCharacters.DAL.Models;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -57,8 +56,8 @@ namespace MovieCharacters.API.Controllers
         [HttpPost]
         public async Task<ActionResult<FranchiseDto>> Post([FromBody] FranchiseDto value)
         {
-            IFranchise franchise = _mapper.Map<Franchise>(value);
-            IFranchise result = await _franchiseRepository.AddAsync(franchise);
+            Franchise franchise = _mapper.Map<Franchise>(value);
+            Franchise result = await _franchiseRepository.AddAsync(franchise);
             FranchiseDto resultDto = _mapper.Map<FranchiseDto>(result);
             return Ok(resultDto);
         }

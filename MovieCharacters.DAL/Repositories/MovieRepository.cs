@@ -10,32 +10,32 @@ namespace MovieCharacters.DAL.Repositories
 {
     public class MovieRepository : IMovieRepository
     {
-        public Task<IMovie> AddAsync(IMovie entity)
+        public Task<Movie> AddAsync(Movie entity)
         {
             throw new NotImplementedException();
         }
 
-        public Task<int> DeleteAsync(IMovie entity)
+        public Task<int> DeleteAsync(Movie entity)
         {
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<IMovie>> FindAllAsync(Expression<Func<IMovie, bool>> predicate)
+        public Task<IEnumerable<Movie>> FindAllAsync(Expression<Func<Movie, bool>> predicate)
         {
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<IMovie>> GetAllAsync()
+        public Task<IEnumerable<Movie>> GetAllAsync()
         {
             throw new NotImplementedException();
         }
 
-        public Task<IMovie> GetByIdAsync(int id)
+        public Task<Movie> GetByIdAsync(int id)
         {
             throw new NotImplementedException();
         }
 
-        public Task<int> UpdateAsync(IMovie entity)
+        public Task<Movie> UpdateAsync(Movie entity)
         {
             throw new NotImplementedException();
         }

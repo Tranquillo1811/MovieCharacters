@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using AutoMapper;
 using MovieCharacters.BLL.Models;
-using MovieCharacters.DAL.Models;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -57,8 +56,8 @@ namespace MovieCharacters.API.Controllers
         [HttpPost]
         public async Task<ActionResult<MovieDto>> Post([FromBody] MovieDto value)
         {
-            IMovie movie = _mapper.Map<Movie>(value);
-            IMovie result = await _movieRepository.AddAsync(movie);
+            Movie movie = _mapper.Map<Movie>(value);
+            Movie result = await _movieRepository.AddAsync(movie);
             MovieDto resultDto = _mapper.Map<MovieDto>(result);
             return Ok(resultDto);
         }

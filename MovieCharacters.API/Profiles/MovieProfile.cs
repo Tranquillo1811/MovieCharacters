@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using MovieCharacters.BLL.Models;
-using MovieCharacters.DAL.Models;
 using System.Linq;
 
 namespace MovieCharacters.API.Profiles

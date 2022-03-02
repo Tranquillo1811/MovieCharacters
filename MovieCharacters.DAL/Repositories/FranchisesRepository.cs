@@ -6,28 +6,26 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using MovieCharacters.DAL.Models;
 
 namespace MovieCharacters.DAL.Repositories
 {
     public class FranchisesRepository : IFranchiseRepository
     {
-        public async Task<IFranchise> AddAsync(IFranchise entity)
+        public async Task<Franchise> AddAsync(Franchise entity)
         {
-            IFranchise result;
             using (MovieCharactersContext context = new())
             {
-                result = (IFranchise)await context.AddAsync(entity);
+                var franchise = await context.AddAsync(entity);
                 await context.SaveChangesAsync();
             }
-            return result;
+            return entity;
         }
 
-        public async Task<int> DeleteAsync(IFranchise entity)
+        public async Task<int> DeleteAsync(Franchise entity)
         {
             using (MovieCharactersContext context = new ())
             {
-                var _franchise = (IFranchise)await context.FindAsync(typeof(IFranchise), entity.Id);
+                var _franchise = (Franchise)await context.FindAsync(typeof(Franchise), entity.Id);
                 if (_franchise != null)
                 {
                     context.Remove(_franchise);
@@ -38,7 +36,7 @@ namespace MovieCharacters.DAL.Repositories
             return entity.Id;
         }
 
-        public async Task<IEnumerable<IFranchise>> FindAllAsync(Expression<Func<IFranchise, bool>> predicate)
+        public async Task<IEnumerable<Franchise>> FindAllAsync(Expression<Func<Franchise, bool>> predicate)
         {
             List<Franchise> result = new List<Franchise>();
 
@@ -51,7 +49,7 @@ namespace MovieCharacters.DAL.Repositories
             return result;
         }
 
-        public async Task<IEnumerable<IFranchise>> GetAllAsync()
+        public async Task<IEnumerable<Franchise>> GetAllAsync()
         {
             List<Franchise> result = new List<Franchise>();
 
@@ -64,19 +62,19 @@ namespace MovieCharacters.DAL.Repositories
             return result;
         }
 
-        public async Task<IFranchise> GetByIdAsync(int id)
+        public async Task<Franchise> GetByIdAsync(int id)
         {
-            IFranchise franchise = new Franchise();
+            Franchise franchise = new Franchise();
 
             using (MovieCharactersContext context = new())
             {
-                franchise = (IFranchise)await context.FindAsync(typeof(IFranchise), id);
+                franchise = (Franchise)await context.FindAsync(typeof(Franchise), id);
             }
 
             return franchise;
         }
 
-        public async Task<int> UpdateAsync(IFranchise entity)
+        public async Task<int> UpdateAsync(Franchise entity)
         {
             using (MovieCharactersContext context = new())
             {
@@ -85,6 +83,11 @@ namespace MovieCharacters.DAL.Repositories
             }
 
             return entity.Id;
+        }
+
+        Task<Franchise> IRepository<Franchise>.UpdateAsync(Franchise entity)
+        {
+            throw new NotImplementedException();
         }
     }
 }
