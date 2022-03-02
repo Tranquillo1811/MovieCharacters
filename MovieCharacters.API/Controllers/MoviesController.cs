@@ -1,5 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using AutoMapper;
+using MovieCharacters.BLL.Models;
+using MovieCharacters.DAL.Models;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -9,24 +13,40 @@ namespace MovieCharacters.API.Controllers
     [ApiController]
     public class MoviesController : ControllerBase
     {
-        // GET: api/<MoviesController>
-        [HttpGet]
-        public IEnumerable<string> Get()
+        private readonly IMovieRepository _movieRepository;
+        private readonly IMapper _mapper;
+
+        public MoviesController(IMovieRepository movieRepository, IMapper mapper)
         {
-            return new string[] { "value1", "value2" };
+            _movieRepository = movieRepository;
+            _mapper = mapper;
         }
 
-        // GET api/<MoviesController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        // GET api/<MoviesController>
+        public async Task<ActionResult<IEnumerable<MovieDto>>> GetAsync()
         {
-            return "value";
+            List<MovieDto> movies = new();
+            var movieEntities = await _movieRepository.GetAllAsync();
+            movies = _mapper.Map<List<MovieDto>>(movieEntities);
+            return Ok(movies);
+        }
+
+        // GET api/<MoviesController>/2
+        [HttpGet("{id}")]
+        public async Task<MovieDto> GetAsync(int id)
+        {
+            MovieDto movie = _mapper.Map<MovieDto>(await _movieRepository.GetByIdAsync(id));
+            return movie;
         }
 
         // POST api/<MoviesController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<ActionResult<MovieDto>> Post([FromBody] MovieDto value)
         {
+            IMovie movie = _mapper.Map<Movie>(value);
+            IMovie result = await _movieRepository.AddAsync(movie);
+            MovieDto resultDto = _mapper.Map<MovieDto>(result);
+            return Ok(resultDto);
         }
 
         // PUT api/<MoviesController>/5
