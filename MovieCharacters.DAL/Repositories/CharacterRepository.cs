@@ -116,23 +116,27 @@ namespace MovieCharacters.DAL.Repositories
             Character characterResult;
             using (MovieCharactersContext context = new())
             {
-                Character editCharacter = null;
-                try
-                {
-                    editCharacter = context.Characters.Find(entity.Id);
-                }
-                catch(Exception ex)
-                {
-                    //TODO: not quite sure, how to actually handle this...
-                }
-                if (editCharacter == null)
-                    return null;
-                //--- change all properties
-                editCharacter.FullName = entity.FullName;
-                editCharacter.Alias = entity.Alias;
-                editCharacter.PictureUrl = entity.PictureUrl;
-                editCharacter.Gender = entity.Gender;
-                editCharacter.Movies = ((Character)entity).Movies;
+                //Character editCharacter = null;
+                //try
+                //{
+                //    editCharacter = context.Characters.Find(entity.Id);
+                //}
+                //catch(Exception ex)
+                //{
+                //    //TODO: not quite sure, how to actually handle this...
+                //}
+                //if (editCharacter == null)
+                //    return null;
+
+                ////--- change all properties
+                //editCharacter.FullName = entity.FullName;
+                //editCharacter.Alias = entity.Alias;
+                //editCharacter.PictureUrl = entity.PictureUrl;
+                //editCharacter.Gender = entity.Gender;
+                //editCharacter.Movies = ((Character)entity).Movies;
+
+                context.Entry(entity).State = EntityState.Modified;
+
                 int intResult = 0;
                 try
                 {
@@ -145,7 +149,8 @@ namespace MovieCharacters.DAL.Repositories
 
                 if (intResult == 0)
                     return null;
-                characterResult = editCharacter;
+                //characterResult = editCharacter;
+                characterResult = entity;
             }
             return characterResult;
         }
