@@ -27,7 +27,9 @@ namespace MovieCharactersAPI
             services.AddControllers();
             services.AddAutoMapper(typeof(Startup));
 
-            services.Add(new ServiceDescriptor(typeof(CharacterRepository), new CharacterRepository()));
+            services.Add(new ServiceDescriptor(typeof(ICharacterRepository), new CharacterRepository()));
+            services.Add(new ServiceDescriptor(typeof(IFranchiseRepository), new FranchisesRepository()));
+            services.Add(new ServiceDescriptor(typeof(IMovieRepository), new MovieRepository()));
 
             services.AddSwaggerGen(c =>
             {
