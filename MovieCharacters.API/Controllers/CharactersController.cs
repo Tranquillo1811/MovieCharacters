@@ -30,13 +30,13 @@ namespace MovieCharacters.API.Controllers
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<ActionResult<IEnumerable<CharacterDto>>> GetAsync()
+        public async Task<ActionResult<IEnumerable<CharacterAddDto>>> GetAsync()
         {
-            List<CharacterDto> characters;
+            List<CharacterAddDto> characters;
             var charactersBLL = await _characterRepository.GetAllAsync();
             if (charactersBLL == null)
                 return NoContent();
-            characters = _mapper.Map<List<CharacterDto>>(charactersBLL);
+            characters = _mapper.Map<List<CharacterAddDto>>(charactersBLL);
             return Ok(characters);
         }
 
@@ -50,13 +50,13 @@ namespace MovieCharacters.API.Controllers
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<CharacterDto>> GetAsyncById(int id)
+        public async Task<ActionResult<CharacterReadDto>> GetAsyncById(int id)
         {
-            CharacterDto character;
+            CharacterReadDto character;
             Character characterBLL = await _characterRepository.GetByIdAsync(id);
             if(characterBLL == null)
                 return NotFound();
-            character = _mapper.Map<CharacterDto>(await _characterRepository.GetByIdAsync(id));
+            character = _mapper.Map<CharacterReadDto>(await _characterRepository.GetByIdAsync(id));
             return Ok(character);
         }
 
@@ -69,11 +69,11 @@ namespace MovieCharacters.API.Controllers
         [Consumes(MediaTypeNames.Application.Json)]
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status201Created)]
-        public async Task<ActionResult<CharacterDto>> Post([FromBody] CharacterDto value)
+        public async Task<ActionResult<CharacterAddDto>> Post([FromBody] CharacterAddDto value)
         {
             Character characterBll = _mapper.Map<Character>(value);
             Character result = await _characterRepository.AddAsync(characterBll);
-            CharacterDto resultDto = _mapper.Map<CharacterDto>((Character)result);
+            CharacterReadDto resultDto = _mapper.Map<CharacterReadDto>((Character)result);
             return CreatedAtAction(nameof(GetAsyncById), new { id = result.Id }, resultDto);
         }
 
@@ -90,7 +90,7 @@ namespace MovieCharacters.API.Controllers
         [ProducesResponseType(StatusCodes.Status304NotModified)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<ActionResult<CharacterDto>> Put(int id, [FromBody] CharacterDto value)
+        public async Task<ActionResult> Put(int id, [FromBody] CharacterUpdateDto value)
         {
             if (id != value.Id)
                 return BadRequest();
@@ -98,19 +98,32 @@ namespace MovieCharacters.API.Controllers
             Character currentCharacter = await _characterRepository.GetByIdAsync(id);
             if (currentCharacter == null)   //--- if characterId doesn't exist
                 return NotFound();
-            if (currentCharacter.PictureUrl == characterBll.PictureUrl 
-                &&
-                currentCharacter.PictureUrl == characterBll.PictureUrl)
-            { }
-            Character result = await _characterRepository.UpdateAsync(characterBll);
-            CharacterDto resultDto = _mapper.Map<CharacterDto>((Character)result);
+            if (currentCharacter.Equals(characterBll))  //--- if nothing was actually changed
+            {
+                CharacterReadDto characterDto = _mapper.Map<CharacterReadDto>(characterBll);
+                return StatusCode(StatusCodes.Status304NotModified, characterDto);
+            }
+            await _characterRepository.UpdateAsync(characterBll);
             return NoContent();
         }
 
         // DELETE api/<CharactersController>/5
+        /// <summary>
+        /// deletes the character with the respective Id
+        /// </summary>
+        /// <param name="id">Id of the character to be deleted</param>
+        /// <returns>200 if character has been deleted or 204 if character wasn't present at all</returns>
+        [Consumes(MediaTypeNames.Text.Plain)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<ActionResult> DeleteById(int id)
         {
+            Character characterBll = await _characterRepository.GetByIdAsync(id);
+            if (characterBll == null)
+                return NoContent();
+            await _characterRepository.DeleteByIdAsync(id);
+            return Ok();
         }
     }
 }

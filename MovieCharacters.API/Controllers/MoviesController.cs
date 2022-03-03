@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using AutoMapper;
+using MovieCharacters.BLL.Models;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -9,24 +12,54 @@ namespace MovieCharacters.API.Controllers
     [ApiController]
     public class MoviesController : ControllerBase
     {
-        // GET: api/<MoviesController>
+        private readonly IMovieRepository _movieRepository;
+        private readonly IMapper _mapper;
+
+        public MoviesController(IMovieRepository movieRepository, IMapper mapper)
+        {
+            _movieRepository = movieRepository;
+            _mapper = mapper;
+        }
+
+        /// <summary>
+        /// Get a list of all movies
+        /// </summary>
+        /// <returns>List of each movie details</returns>
         [HttpGet]
-        public IEnumerable<string> Get()
+        [ProducesResponseType(200)]
+        public async Task<ActionResult<IEnumerable<MovieDto>>> GetAsync()
         {
-            return new string[] { "value1", "value2" };
+            List<MovieDto> movies = new();
+            var movieEntities = await _movieRepository.GetAllAsync();
+            movies = _mapper.Map<List<MovieDto>>(movieEntities);
+            return Ok(movies);
         }
 
-        // GET api/<MoviesController>/5
+        /// <summary>
+        /// Get a specific movie from database
+        /// </summary>
+        /// <param name="id">Movie unique id</param>
+        /// <returns>Movie details as a class object</returns>
         [HttpGet("{id}")]
-        public string Get(int id)
+        [ProducesResponseType(200)]
+        public async Task<MovieDto> GetAsync(int id)
         {
-            return "value";
+            MovieDto movie = _mapper.Map<MovieDto>(await _movieRepository.GetByIdAsync(id));
+            return movie;
         }
 
-        // POST api/<MoviesController>
+        /// <summary>
+        /// Add a new movie to the database
+        /// </summary>
+        /// <param name="value">Movie object with all details</param>
+        /// <returns>True if a movie was inserted successfully</returns>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<ActionResult<MovieDto>> Post([FromBody] MovieDto value)
         {
+            Movie movie = _mapper.Map<Movie>(value);
+            Movie result = await _movieRepository.AddAsync(movie);
+            MovieDto resultDto = _mapper.Map<MovieDto>(result);
+            return Ok(resultDto);
         }
 
         // PUT api/<MoviesController>/5

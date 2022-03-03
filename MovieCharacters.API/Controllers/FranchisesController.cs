@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using AutoMapper;
+using MovieCharacters.BLL.Models;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -9,24 +12,54 @@ namespace MovieCharacters.API.Controllers
     [ApiController]
     public class FranchisesController : ControllerBase
     {
-        // GET: api/<FranchisesController>
+        private readonly IFranchiseRepository _franchiseRepository;
+        private readonly IMapper _mapper;
+
+        public FranchisesController(IFranchiseRepository franchiseRepository, IMapper mapper)
+        {
+            _franchiseRepository = franchiseRepository;
+            _mapper = mapper;
+        }
+
+        /// <summary>
+        /// Get a list of all franchises
+        /// </summary>
+        /// <returns>List of each franchise details</returns>
         [HttpGet]
-        public IEnumerable<string> Get()
+        [ProducesResponseType(200)]
+        public async Task<ActionResult<IEnumerable<FranchiseDto>>> GetAsync()
         {
-            return new string[] { "value1", "value2" };
+            List<FranchiseDto> franchises = new();
+            var franchiseEntities = await _franchiseRepository.GetAllAsync();
+            franchises = _mapper.Map<List<FranchiseDto>>(franchiseEntities);
+            return Ok(franchises);
         }
 
-        // GET api/<FranchisesController>/5
+        /// <summary>
+        /// Get a specific franchise from database
+        /// </summary>
+        /// <param name="id">Franchise unique id</param>
+        /// <returns>Franchise details as a class object</returns>
         [HttpGet("{id}")]
-        public string Get(int id)
+        [ProducesResponseType(200)]
+        public async Task<FranchiseDto> GetAsync(int id)
         {
-            return "value";
+            FranchiseDto franchise = _mapper.Map<FranchiseDto>(await _franchiseRepository.GetByIdAsync(id));
+            return franchise;
         }
 
-        // POST api/<FranchisesController>
+        /// <summary>
+        /// Add a new franchise to the database 
+        /// </summary>
+        /// <param name="value">Franchise object with all details</param>
+        /// <returns>True if a franchise was inserted successfully</returns>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<ActionResult<FranchiseDto>> Post([FromBody] FranchiseDto value)
         {
+            Franchise franchise = _mapper.Map<Franchise>(value);
+            Franchise result = await _franchiseRepository.AddAsync(franchise);
+            FranchiseDto resultDto = _mapper.Map<FranchiseDto>(result);
+            return Ok(resultDto);
         }
 
         // PUT api/<FranchisesController>/5
