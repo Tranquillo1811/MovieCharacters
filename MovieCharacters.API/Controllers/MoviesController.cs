@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using AutoMapper;
 using MovieCharacters.BLL.Models;
+using System.Net.Mime;
+using Microsoft.AspNetCore.Http;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -26,12 +28,16 @@ namespace MovieCharacters.API.Controllers
         /// </summary>
         /// <returns>List of each movie details</returns>
         [HttpGet]
-        [ProducesResponseType(200)]
-        public async Task<ActionResult<IEnumerable<MovieDto>>> GetAsync()
+        [Produces(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task<ActionResult<IEnumerable<MovieReadDto>>> GetAsync()
         {
-            List<MovieDto> movies = new();
-            var movieEntities = await _movieRepository.GetAllAsync();
-            movies = _mapper.Map<List<MovieDto>>(movieEntities);
+            List<MovieReadDto> movies;
+            var moviesBLL = await _movieRepository.GetAllAsync();
+            if (moviesBLL == null)
+                return NoContent();
+            movies = _mapper.Map<List<MovieReadDto>>(moviesBLL);
             return Ok(movies);
         }
 
@@ -41,11 +47,18 @@ namespace MovieCharacters.API.Controllers
         /// <param name="id">Movie unique id</param>
         /// <returns>Movie details as a class object</returns>
         [HttpGet("{id}")]
-        [ProducesResponseType(200)]
-        public async Task<MovieDto> GetAsync(int id)
+        [Consumes(MediaTypeNames.Text.Plain)]
+        [Produces(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<MovieReadDto>> GetAsyncById(int id)
         {
-            MovieDto movie = _mapper.Map<MovieDto>(await _movieRepository.GetByIdAsync(id));
-            return movie;
+            MovieReadDto movie;
+            Movie movieBLL = await _movieRepository.GetByIdAsync(id);
+            if (movieBLL == null)
+                return NotFound();
+            movie = _mapper.Map<MovieReadDto>(await _movieRepository.GetByIdAsync(id));
+            return Ok(movie);
         }
 
         /// <summary>
@@ -54,24 +67,64 @@ namespace MovieCharacters.API.Controllers
         /// <param name="value">Movie object with all details</param>
         /// <returns>True if a movie was inserted successfully</returns>
         [HttpPost]
-        public async Task<ActionResult<MovieDto>> Post([FromBody] MovieDto value)
+        [Consumes(MediaTypeNames.Application.Json)]
+        [Produces(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        public async Task<ActionResult<MovieReadDto>> Post([FromBody] MovieAddDto value)
         {
             Movie movie = _mapper.Map<Movie>(value);
             Movie result = await _movieRepository.AddAsync(movie);
-            MovieDto resultDto = _mapper.Map<MovieDto>(result);
-            return Ok(resultDto);
+            MovieReadDto resultDto = _mapper.Map<MovieReadDto>(result);
+            return CreatedAtAction(nameof(GetAsyncById), new { id = result.Id }, resultDto);
         }
 
         // PUT api/<MoviesController>/5
+        /// <summary>
+        /// updates existing movie in the Db
+        /// </summary>
+        /// <param name="id">id of the movie that is subject to change</param>
+        /// <param name="value">JSON of updated movie object</param>
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [Consumes(MediaTypeNames.Application.Json)]
+        [Produces(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status304NotModified)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task<ActionResult> Put(int id, [FromBody] MovieUpdateDto value)
         {
+            if (id != value.Id)
+                return BadRequest();
+            Movie movieBll = _mapper.Map<Movie>(value);
+            Movie currentMovie = await _movieRepository.GetByIdAsync(id);
+            if (currentMovie == null)   //--- if movieId doesn't exist
+                return NotFound();
+            if (currentMovie.Equals(movieBll))  //--- if nothing was actually changed
+            {
+                MovieReadDto movieDto = _mapper.Map<MovieReadDto>(movieBll);
+                return StatusCode(StatusCodes.Status304NotModified, movieDto);
+            }
+            await _movieRepository.UpdateAsync(movieBll);
+            return NoContent();
         }
 
         // DELETE api/<MoviesController>/5
+        /// <summary>
+        /// deletes the movie with the respective Id from Movies Db table
+        /// </summary>
+        /// <param name="id">Id of the movie to be deleted</param>
+        /// <returns>200 if movie has been deleted or 204 if movie wasn't present at all</returns>
+        [Consumes(MediaTypeNames.Text.Plain)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<ActionResult> DeleteById(int id)
         {
+            Movie movieBll = await _movieRepository.GetByIdAsync(id);
+            if (movieBll == null)
+                return NoContent();
+            await _movieRepository.DeleteByIdAsync(id);
+            return Ok();
         }
     }
 }

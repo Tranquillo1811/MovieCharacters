@@ -30,13 +30,13 @@ namespace MovieCharacters.API.Controllers
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<ActionResult<IEnumerable<CharacterAddDto>>> GetAsync()
+        public async Task<ActionResult<IEnumerable<CharacterReadDto>>> GetAsync()
         {
-            List<CharacterAddDto> characters;
+            List<CharacterReadDto> characters;
             var charactersBLL = await _characterRepository.GetAllAsync();
             if (charactersBLL == null)
                 return NoContent();
-            characters = _mapper.Map<List<CharacterAddDto>>(charactersBLL);
+            characters = _mapper.Map<List<CharacterReadDto>>(charactersBLL);
             return Ok(characters);
         }
 
