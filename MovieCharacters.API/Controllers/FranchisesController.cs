@@ -27,11 +27,11 @@ namespace MovieCharacters.API.Controllers
         /// <returns>List of each franchise details</returns>
         [HttpGet]
         [ProducesResponseType(200)]
-        public async Task<ActionResult<IEnumerable<FranchiseDto>>> GetAsync()
+        public async Task<ActionResult<IEnumerable<FranchiseReadDto>>> GetAsync()
         {
-            List<FranchiseDto> franchises = new();
+            List<FranchiseReadDto> franchises = new();
             var franchiseEntities = await _franchiseRepository.GetAllAsync();
-            franchises = _mapper.Map<List<FranchiseDto>>(franchiseEntities);
+            franchises = _mapper.Map<List<FranchiseReadDto>>(franchiseEntities);
             return Ok(franchises);
         }
 
@@ -42,9 +42,9 @@ namespace MovieCharacters.API.Controllers
         /// <returns>Franchise details as a class object</returns>
         [HttpGet("{id}")]
         [ProducesResponseType(200)]
-        public async Task<FranchiseDto> GetAsync(int id)
+        public async Task<FranchiseReadDto> GetAsync(int id)
         {
-            FranchiseDto franchise = _mapper.Map<FranchiseDto>(await _franchiseRepository.GetByIdAsync(id));
+            FranchiseReadDto franchise = _mapper.Map<FranchiseReadDto>(await _franchiseRepository.GetByIdAsync(id));
             return franchise;
         }
 
@@ -54,11 +54,11 @@ namespace MovieCharacters.API.Controllers
         /// <param name="value">Franchise object with all details</param>
         /// <returns>True if a franchise was inserted successfully</returns>
         [HttpPost]
-        public async Task<ActionResult<FranchiseDto>> Post([FromBody] FranchiseDto value)
+        public async Task<ActionResult<FranchiseReadDto>> Post([FromBody] FranchiseReadDto value)
         {
             Franchise franchise = _mapper.Map<Franchise>(value);
             Franchise result = await _franchiseRepository.AddAsync(franchise);
-            FranchiseDto resultDto = _mapper.Map<FranchiseDto>(result);
+            FranchiseReadDto resultDto = _mapper.Map<FranchiseReadDto>(result);
             return Ok(resultDto);
         }
 

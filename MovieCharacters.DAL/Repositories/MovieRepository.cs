@@ -72,7 +72,7 @@ namespace MovieCharacters.DAL.Repositories
             {
                 try
                 {
-                    movies = await context.Movies.Cast<Movie>().ToListAsync();
+                    movies = await context.Movies.Include(m => m.Characters).ToListAsync();
                 }
                 catch (Exception ex)
                 {
@@ -94,7 +94,7 @@ namespace MovieCharacters.DAL.Repositories
             {
                 try
                 {
-                    movie = await context.Movies.FindAsync(id);
+                    movie = await context.Movies.Include(m => m.Characters).FirstOrDefaultAsync(m => m.Id == id);
                 }
                 catch (Exception ex)
                 {
@@ -129,6 +129,39 @@ namespace MovieCharacters.DAL.Repositories
                 movieResult = entity;
             }
             return movieResult;
+        }
+
+        public async Task<Movie> SetCharacterIdsAsync(Movie movie, int[] characterIds)
+        {
+            using (MovieCharactersContext context = new())
+            {
+                //context.Entry(movie).State = EntityState.Modified;
+                movie = context.Movies.Include(m => m.Characters).FirstOrDefault(m => m.Id == movie.Id);
+                //--- add all characters to movie which are not in there already
+                foreach (int characterId in characterIds)
+                {
+                    if (!movie.Characters.Any(c => c.Id == characterId))
+                        movie.Characters.Add(await context.Characters.FindAsync(characterId));
+                }
+                //--- remove all characters from movie which are not supposed to be there any longer
+                foreach(Character character in movie.Characters)
+                {
+                    if (!characterIds.Contains(character.Id))
+                        movie.Characters.Remove(character);
+                }
+                int intResult = 0;
+                try
+                {
+                    intResult = await context.SaveChangesAsync();
+                }
+                catch (Exception ex)
+                {
+                    //TODO: not quite sure, how to actually handle this...
+                }
+                if (intResult == 0)
+                    return null;
+            }
+            return movie;
         }
     }
 }

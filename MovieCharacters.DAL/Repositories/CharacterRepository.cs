@@ -72,7 +72,7 @@ namespace MovieCharacters.DAL.Repositories
             {
                 try
                 {
-                    characters = await context.Characters.Cast<Character>().ToListAsync();
+                    characters = await context.Characters.Include(c => c.Movies).ToListAsync();
                 }
                 catch(Exception ex)
                 {
@@ -94,7 +94,7 @@ namespace MovieCharacters.DAL.Repositories
             {
                 try
                 {
-                    character = await context.Characters.FindAsync(id);
+                    character = await context.Characters.Include(c => c.Movies).FirstOrDefaultAsync(c => c.Id == id);
                 }
                 catch (Exception ex)
                 {

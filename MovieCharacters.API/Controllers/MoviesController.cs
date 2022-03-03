@@ -5,6 +5,7 @@ using AutoMapper;
 using MovieCharacters.BLL.Models;
 using System.Net.Mime;
 using Microsoft.AspNetCore.Http;
+using System.Linq;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -15,14 +16,17 @@ namespace MovieCharacters.API.Controllers
     public class MoviesController : ControllerBase
     {
         private readonly IMovieRepository _movieRepository;
+        private readonly ICharacterRepository _characterRepository;
         private readonly IMapper _mapper;
 
-        public MoviesController(IMovieRepository movieRepository, IMapper mapper)
+        public MoviesController(IMovieRepository movieRepository, ICharacterRepository characterRepository, IMapper mapper)
         {
             _movieRepository = movieRepository;
+            _characterRepository = characterRepository;
             _mapper = mapper;
         }
 
+        #region generic CRUD endpoints
         /// <summary>
         /// Get a list of all movies
         /// </summary>
@@ -126,5 +130,36 @@ namespace MovieCharacters.API.Controllers
             await _movieRepository.DeleteByIdAsync(id);
             return Ok();
         }
+        #endregion
+
+        #region update characters in a movie
+        /// <summary>
+        /// updates characters of a movie
+        /// </summary>
+        /// <param name="movieId">id of the movie to change characters of</param>
+        /// <param name="characterIds">ids of characters to set</param>
+        /// <returns></returns>
+        [HttpPatch("{movieId}")]
+        [Consumes(MediaTypeNames.Application.Json)]
+        [Produces(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(StatusCodes.Status304NotModified)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task<ActionResult> Patch(int movieId, [FromBody] int[] characterIds)
+        {
+            Movie movieBll = await _movieRepository.GetByIdAsync(movieId);
+            if (movieBll == null)   //--- if movieId doesn't exist
+                return NotFound();
+            int[] currentMoviesCharacterIds = movieBll.Characters.Select(c => c.Id).ToArray();
+            if (string.Join(',',currentMoviesCharacterIds.OrderBy(id => id)) == string.Join(',', characterIds.OrderBy(id => id)))  //--- if nothing was actually changed
+            {
+                MovieReadDto movieDto = _mapper.Map<MovieReadDto>(movieBll);
+                return StatusCode(StatusCodes.Status304NotModified, movieDto);
+            }
+            await _movieRepository.SetCharacterIdsAsync(movieBll, characterIds);
+            return NoContent();
+        }
+        #endregion
+
     }
 }

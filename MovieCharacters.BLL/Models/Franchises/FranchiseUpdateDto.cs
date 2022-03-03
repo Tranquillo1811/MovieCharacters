@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace MovieCharacters.BLL.Models
 {
-    public interface IFranchiseRepository : IRepository<Franchise>
+    public class FranchiseUpdateDto
     {
-        public Task<Franchise> SetMovieIdsAsync(Franchise Franchise, int[] MovieIds);
-
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
     }
 }

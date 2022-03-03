@@ -71,10 +71,44 @@ namespace MovieCharacters.DAL.Repositories
 
             using (MovieCharactersContext context = new())
             {
-                franchise = (Franchise)await context.FindAsync(typeof(Franchise), id);
+                //franchise = (Franchise)await context.FindAsync(typeof(Franchise), id);
+                franchise = await context.Franchises.Include(f => f.Movies).FirstOrDefaultAsync(f => f.Id == id);
             }
 
             return franchise;
+        }
+
+        public async Task<Franchise> SetMovieIdsAsync(Franchise Franchise, int[] MovieIds)
+        {
+            using (MovieCharactersContext context = new())
+            {
+                //context.Entry(movie).State = EntityState.Modified;
+                Franchise = context.Franchises.Include(f => f.Movies).FirstOrDefault(f => f.Id == Franchise.Id);
+                //--- add all characters to movie which are not in there already
+                foreach (int movieId in MovieIds)
+                {
+                    if (!Franchise.Movies.Any(c => c.Id == movieId))
+                        Franchise.Movies.Add(await context.Movies.FindAsync(movieId));
+                }
+                //--- remove all characters from movie which are not supposed to be there any longer
+                foreach (Movie movie in Franchise.Movies)
+                {
+                    if (!MovieIds.Contains(movie.Id))
+                        Franchise.Movies.Remove(movie);
+                }
+                int intResult = 0;
+                try
+                {
+                    intResult = await context.SaveChangesAsync();
+                }
+                catch (Exception ex)
+                {
+                    //TODO: not quite sure, how to actually handle this...
+                }
+                if (intResult == 0)
+                    return null;
+            }
+            return Franchise;
         }
 
         public async Task<int> UpdateAsync(Franchise entity)
