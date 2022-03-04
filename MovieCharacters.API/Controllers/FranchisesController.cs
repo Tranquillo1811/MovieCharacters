@@ -4,7 +4,10 @@ using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
 using System.Collections.Generic;
 using AutoMapper;
+using System.Linq;
 using MovieCharacters.BLL.Models;
+using MovieCharacters.DAL;
+using Microsoft.EntityFrameworkCore;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -114,6 +117,64 @@ namespace MovieCharacters.API.Controllers
             await _franchiseRepository.DeleteByIdAsync(id);
 
             return Ok();
+        }
+
+        /// <summary>
+        /// Report all movies from franchise
+        /// </summary>
+        /// <param name="id">Id of the franchise being searched for</param>
+        /// <returns>A list of all movies assigned to franchise</returns>
+        [HttpGet("ReportMovies/{id}")]
+        [ProducesResponseType(200)]
+        public async Task<ActionResult<List<MovieDto>>> GetMoviesByFranchiseId(int id)
+        {
+            MovieCharactersContext _context = new MovieCharactersContext();
+
+            var franchise = await _context.Franchises.Include(f => f.Movies).FirstOrDefaultAsync(f => f.Id == id);
+
+            if (franchise == null)
+                return NotFound();
+
+            return _mapper.Map<List<MovieDto>>(franchise.Movies.ToList());
+
+        }
+
+        /// <summary>
+        /// Report all characters from franchise
+        /// </summary>
+        /// <param name="id">Id of the franchise being searched for</param>
+        /// <returns>A list of all characters assigned to franchise</returns>
+        [HttpGet("ReportCharacters/{id}")]
+        [ProducesResponseType(200)]
+        public async Task<ActionResult<List<CharacterReportDto>>> GetCharactersByFranchiseId(int id)
+        {
+            MovieCharactersContext _context = new MovieCharactersContext();
+            List<CharacterReportDto> characters = new List<CharacterReportDto>();
+
+            var franchise = await _context.Franchises.Include(f => f.Movies).FirstOrDefaultAsync(f => f.Id == id);
+
+            if (franchise == null)
+                return NotFound();
+
+            foreach (var movie in franchise.Movies)
+            {
+                var moviesList = await _context.Movies.Include(m => m.Characters).FirstOrDefaultAsync(m => m.Id == movie.Id);
+
+                foreach (var character in moviesList.Characters)
+                {
+                    if (!characters.Exists(c => c.Id == character.Id))
+                    {
+                        characters.Add(new CharacterReportDto() { 
+                            Id=character.Id, 
+                            Alias=character.Alias, 
+                            FullName= character.FullName, 
+                            Gender = character.Gender, 
+                            PictureUrl = character.PictureUrl });
+                    }
+                }
+            }
+
+            return characters;
         }
     }
 }

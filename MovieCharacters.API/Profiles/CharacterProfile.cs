@@ -16,6 +16,8 @@ namespace MovieCharacters.API.Profiles
                 .ReverseMap();
             CreateMap<Character, CharacterUpdateDto>()
                 .ReverseMap();
+            CreateMap<Character, CharacterReportDto>()
+                .ReverseMap();
         }
 
     }
