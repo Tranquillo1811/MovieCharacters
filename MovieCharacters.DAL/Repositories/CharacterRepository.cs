@@ -56,11 +56,6 @@ namespace MovieCharacters.DAL.Repositories
             return CharacterId;
         }
 
-        public async Task<IEnumerable<Character>> FindAllAsync(Expression<Func<Character, bool>> predicate)
-        {
-            throw new NotImplementedException();
-        }
-
         /// <summary>
         /// gets all characters from Db
         /// </summary>

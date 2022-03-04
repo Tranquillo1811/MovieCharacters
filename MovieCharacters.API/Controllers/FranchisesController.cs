@@ -4,8 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
 using System.Collections.Generic;
 using AutoMapper;
-using MovieCharacters.BLL.Models;
 using System.Linq;
+using MovieCharacters.BLL.Models;
 
 namespace MovieCharacters.API.Controllers
 {
@@ -154,6 +154,48 @@ namespace MovieCharacters.API.Controllers
             }
             await _franchiseRepository.SetMovieIdsAsync(franchiseBll, moviesIds);
             return NoContent();
+        }
+        #endregion
+
+        #region reports for movies and characters
+        /// <summary>
+        /// Report all movies from franchise
+        /// </summary>
+        /// <param name="id">Id of the franchise being searched for</param>
+        /// <returns>A list of all movies assigned to that franchise</returns>
+        [HttpGet("ReportMovies/{id}")]
+        [Consumes(MediaTypeNames.Text.Plain)]
+        [Produces(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<IEnumerable<MovieReadDto>>> GetMoviesByFranchiseId(int id)
+        {
+            List<MovieReadDto> movieReadDtos;
+            IEnumerable<Movie> movieBlls = await _franchiseRepository.GetMoviesById(id);
+            if (movieBlls == null)
+                return NotFound();
+            movieReadDtos = _mapper.Map<List<MovieReadDto>>(movieBlls);
+            return Ok(movieReadDtos);
+        }
+
+        /// <summary>
+        /// Report all characters from franchise
+        /// </summary>
+        /// <param name="id">Id of the franchise being searched for</param>
+        /// <returns>A list of all characters assigned to that franchise</returns>
+        [HttpGet("ReportCharacters/{id}")]
+        [Consumes(MediaTypeNames.Text.Plain)]
+        [Produces(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<IEnumerable<CharacterReadDto>>> GetCharactersByFranchiseId(int id)
+        {
+            List<CharacterReadDto> characterReadDtos;
+            IEnumerable<Character> characterBlls = await _franchiseRepository.GetCharactersById(id);
+            if (characterBlls == null)
+                return NotFound();
+            characterReadDtos = _mapper.Map<List<CharacterReadDto>>(characterBlls);
+            return Ok(characterReadDtos);
         }
         #endregion
     }
