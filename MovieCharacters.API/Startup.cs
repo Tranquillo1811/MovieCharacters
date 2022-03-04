@@ -9,6 +9,7 @@ using MovieCharacters.BLL.Models;
 using System;
 using System.Reflection;
 using System.IO;
+using Microsoft.EntityFrameworkCore;
 
 namespace MovieCharactersAPI
 {
@@ -21,15 +22,19 @@ namespace MovieCharactersAPI
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
+        // This method gets called by the runtime.service Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
             services.AddAutoMapper(typeof(Startup));
 
-            services.Add(new ServiceDescriptor(typeof(ICharacterRepository), new CharacterRepository()));
-            services.Add(new ServiceDescriptor(typeof(IFranchiseRepository), new FranchisesRepository()));
-            services.Add(new ServiceDescriptor(typeof(IMovieRepository), new MovieRepository()));
+            services.AddDbContext<MovieCharacters.DAL.MovieCharactersContext>(
+                options => options.UseSqlServer(Configuration.GetConnectionString("DatabaseConnection")));
+            var sp = services.BuildServiceProvider();
+            var dbContextService = (MovieCharacters.DAL.MovieCharactersContext)sp.GetService(typeof(MovieCharacters.DAL.MovieCharactersContext));
+            services.Add(new ServiceDescriptor(typeof(ICharacterRepository), new CharacterRepository(dbContextService)));
+            services.Add(new ServiceDescriptor(typeof(IFranchiseRepository), new FranchisesRepository(dbContextService)));
+            services.Add(new ServiceDescriptor(typeof(IMovieRepository), new MovieRepository(dbContextService)));
 
             services.AddSwaggerGen(c =>
             {

@@ -9,11 +9,10 @@ namespace MovieCharacters.DAL
         public DbSet<Movie> Movies { get; set; }
         public DbSet<Franchise> Franchises { get; set; }
         public DbSet<Character> Characters { get; set; }
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            base.OnConfiguring(optionsBuilder);
 
-            optionsBuilder.UseSqlServer("Data Source = localhost; Initial Catalog = MovieCharactersDb; Integrated Security = True; Trust Server Certificate = True");
+        public MovieCharactersContext(DbContextOptions<MovieCharactersContext> options) : base(options)
+        {
+
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

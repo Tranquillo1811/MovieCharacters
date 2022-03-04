@@ -11,6 +11,13 @@ namespace MovieCharacters.DAL.Repositories
 {
     public class FranchisesRepository : IFranchiseRepository
     {
+        private readonly MovieCharactersContext _context;
+
+        public FranchisesRepository(MovieCharactersContext context)
+        {
+            _context = context;
+        }
+
         /// <summary>
         /// adds a franchise to the Db
         /// </summary>
@@ -19,17 +26,14 @@ namespace MovieCharacters.DAL.Repositories
         public async Task<Franchise> AddAsync(Franchise entity)
         {
             Franchise franchiseResult = null;
-            using (MovieCharactersContext context = new())
+            try
             {
-                try
-                {
-                    franchiseResult = (await context.Franchises.AddAsync(entity)).Entity;
-                    int intResult = await context.SaveChangesAsync();
-                }
-                catch (Exception ex)
-                {
-                    //TODO: not quite sure, how to actually handle this...
-                }
+                franchiseResult = (await _context.Franchises.AddAsync(entity)).Entity;
+                int intResult = await _context.SaveChangesAsync();
+            }
+            catch
+            {
+                //TODO: not quite sure, how to actually handle this...
             }
             return franchiseResult;
         }
@@ -42,30 +46,22 @@ namespace MovieCharacters.DAL.Repositories
         public async Task<int> DeleteByIdAsync(int entityId)
         {
             Franchise deleteFranchise = await GetByIdAsync(entityId);
-            using (MovieCharactersContext context = new())
+            try
             {
-                try
-                {
-                    context.Franchises.Remove(deleteFranchise);
-                    await context.SaveChangesAsync();
-                }
-                catch (Exception ex)
-                {
-                    //TODO: not quite sure, how to actually handle this...
-                }
+                _context.Franchises.Remove(deleteFranchise);
+                await _context.SaveChangesAsync();
+            }
+            catch
+            {
+                //TODO: not quite sure, how to actually handle this...
             }
             return entityId;
         }
 
         public async Task<IEnumerable<Franchise>> FindAllAsync(Expression<Func<Franchise, bool>> predicate)
         {
-            List<Franchise> result = new List<Franchise>();
-
-            using (MovieCharactersContext context = new())
-            {
-                result = await context.Franchises
-                    .Include(f => f.Movies).ToListAsync();
-            }
+            List<Franchise> result = new ();
+            result = await _context.Franchises.Include(f => f.Movies).ToListAsync();
 
             return result;
         }
@@ -77,16 +73,13 @@ namespace MovieCharacters.DAL.Repositories
         public async Task<IEnumerable<Franchise>> GetAllAsync()
         {
             List<Franchise> franchises = new();
-            using (MovieCharactersContext context = new())
+            try
             {
-                try
-                {
-                    franchises = await context.Franchises.Include(f => f.Movies).ToListAsync();
-                }
-                catch (Exception ex)
-                {
-                    //TODO: not quite sure, how to actually handle this...
-                }
+                franchises = await _context.Franchises.Include(f => f.Movies).ToListAsync();
+            }
+            catch
+            {
+                //TODO: not quite sure, how to actually handle this...
             }
             return franchises;
         }
@@ -99,18 +92,15 @@ namespace MovieCharacters.DAL.Repositories
         public async Task<Franchise> GetByIdAsync(int id)
         {
             Franchise franchise = null;
-            using (MovieCharactersContext context = new())
+            try
             {
-                try
-                {
-                    franchise = await context.Franchises
-                            .Include(f => f.Movies)
-                            .FirstOrDefaultAsync(f => f.Id == id);
-                }
-                catch (Exception ex)
-                {
-                    //TODO: not quite sure, how to actually handle this...
-                }
+                franchise = await _context.Franchises
+                        .Include(f => f.Movies)
+                        .FirstOrDefaultAsync(f => f.Id == id);
+            }
+            catch
+            {
+                //TODO: not quite sure, how to actually handle this...
             }
             return franchise;
         }
@@ -124,34 +114,30 @@ namespace MovieCharacters.DAL.Repositories
         /// <returns></returns>
         public async Task<Franchise> SetMovieIdsAsync(Franchise Franchise, int[] MovieIds)
         {
-            using (MovieCharactersContext context = new())
+            Franchise = _context.Franchises.Include(f => f.Movies).FirstOrDefault(f => f.Id == Franchise.Id);
+            //--- add all characters to movie which are not in there already
+            foreach (int movieId in MovieIds)
             {
-                //context.Entry(movie).State = EntityState.Modified;
-                Franchise = context.Franchises.Include(f => f.Movies).FirstOrDefault(f => f.Id == Franchise.Id);
-                //--- add all characters to movie which are not in there already
-                foreach (int movieId in MovieIds)
-                {
-                    if (!Franchise.Movies.Any(c => c.Id == movieId))
-                        Franchise.Movies.Add(await context.Movies.FindAsync(movieId));
-                }
-                //--- remove all characters from movie which are not supposed to be there any longer
-                foreach (Movie movie in Franchise.Movies)
-                {
-                    if (!MovieIds.Contains(movie.Id))
-                        Franchise.Movies.Remove(movie);
-                }
-                int intResult = 0;
-                try
-                {
-                    intResult = await context.SaveChangesAsync();
-                }
-                catch (Exception ex)
-                {
-                    //TODO: not quite sure, how to actually handle this...
-                }
-                if (intResult == 0)
-                    return null;
+                if (!Franchise.Movies.Any(c => c.Id == movieId))
+                    Franchise.Movies.Add(await _context.Movies.FindAsync(movieId));
             }
+            //--- remove all characters from movie which are not supposed to be there any longer
+            foreach (Movie movie in Franchise.Movies)
+            {
+                if (!MovieIds.Contains(movie.Id))
+                    Franchise.Movies.Remove(movie);
+            }
+            int intResult = 0;
+            try
+            {
+                intResult = await _context.SaveChangesAsync();
+            }
+            catch
+            {
+                //TODO: not quite sure, how to actually handle this...
+            }
+            if (intResult == 0)
+                return null;
             return Franchise;
         }
 
@@ -163,24 +149,21 @@ namespace MovieCharacters.DAL.Repositories
         public async Task<Franchise> UpdateAsync(Franchise entity)
         {
             Franchise franchiseResult;
-            using (MovieCharactersContext context = new())
+            _context.Entry(entity).State = EntityState.Modified;
+
+            int intResult = 0;
+            try
             {
-                context.Entry(entity).State = EntityState.Modified;
-
-                int intResult = 0;
-                try
-                {
-                    intResult = await context.SaveChangesAsync();
-                }
-                catch (Exception ex)
-                {
-                    //TODO: not quite sure, how to actually handle this...
-                }
-
-                if (intResult == 0)
-                    return null;
-                franchiseResult = entity;
+                intResult = await _context.SaveChangesAsync();
             }
+            catch
+            {
+                //TODO: not quite sure, how to actually handle this...
+            }
+
+            if (intResult == 0)
+                return null;
+            franchiseResult = entity;
             return franchiseResult;
         }
 
@@ -192,18 +175,15 @@ namespace MovieCharacters.DAL.Repositories
         public async Task<IEnumerable<Movie>> GetMoviesById(int FranchiseId)
         {
             List<Movie> movies = null;
-            using (MovieCharactersContext context = new())
+            try
             {
-                try
-                {
-                    Franchise franchise = await context.Franchises.Include(f => f.Movies).FirstOrDefaultAsync(f => f.Id == FranchiseId);
-                    if(franchise != null)
-                        movies = (await context.Franchises.Include(f => f.Movies).FirstOrDefaultAsync(f => f.Id == FranchiseId)).Movies?.ToList();
-                }
-                catch (Exception ex)
-                {
-                    //TODO: not quite sure, how to actually handle this...
-                }
+                Franchise franchise = await _context.Franchises.Include(f => f.Movies).FirstOrDefaultAsync(f => f.Id == FranchiseId);
+                if (franchise != null)
+                    movies = (await _context.Franchises.Include(f => f.Movies).FirstOrDefaultAsync(f => f.Id == FranchiseId)).Movies?.ToList();
+            }
+            catch
+            {
+                //TODO: not quite sure, how to actually handle this...
             }
             return movies;
         }
@@ -216,18 +196,15 @@ namespace MovieCharacters.DAL.Repositories
         public async Task<IEnumerable<Character>> GetCharactersById(int FranchiseId)
         {
             List<Character> characters = null;
-            using (MovieCharactersContext context = new())
+            try
             {
-                try
-                {
-                    Franchise franchise = await context.Franchises.Include(f => f.Movies).ThenInclude(m => m.Characters).FirstOrDefaultAsync(f => f.Id == FranchiseId);
-                    if(franchise != null)
-                        characters = franchise.Movies?.SelectMany(m => m.Characters).Distinct().ToList();
-                }
-                catch (Exception ex)
-                {
-                    //TODO: not quite sure, how to actually handle this...
-                }
+                Franchise franchise = await _context.Franchises.Include(f => f.Movies).ThenInclude(m => m.Characters).FirstOrDefaultAsync(f => f.Id == FranchiseId);
+                if (franchise != null)
+                    characters = franchise.Movies?.SelectMany(m => m.Characters).Distinct().ToList();
+            }
+            catch
+            {
+                //TODO: not quite sure, how to actually handle this...
             }
             return characters;
         }

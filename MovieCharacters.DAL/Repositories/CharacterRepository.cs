@@ -10,6 +10,13 @@ namespace MovieCharacters.DAL.Repositories
 {
     public class CharacterRepository : ICharacterRepository
     {
+        private readonly MovieCharactersContext _context;
+
+        public CharacterRepository(MovieCharactersContext context)
+        {
+            _context = context;
+        }
+
         /// <summary>
         /// adds a character to the Db
         /// </summary>
@@ -18,17 +25,14 @@ namespace MovieCharacters.DAL.Repositories
         public async Task<Character> AddAsync(Character entity)
         {
             Character characterResult = null;
-            using (MovieCharactersContext context = new())
+            try
             {
-                try
-                {
-                    characterResult = (await context.Characters.AddAsync(entity)).Entity;
-                    int intResult = await context.SaveChangesAsync();
-                }
-                catch (Exception ex)
-                {
-                    //TODO: not quite sure, how to actually handle this...
-                }
+                characterResult = (await _context.Characters.AddAsync(entity)).Entity;
+                int intResult = await _context.SaveChangesAsync();
+            }
+            catch
+            {
+                //TODO: not quite sure, how to actually handle this...
             }
             return characterResult;
         }
@@ -41,17 +45,14 @@ namespace MovieCharacters.DAL.Repositories
         public async Task<int> DeleteByIdAsync(int CharacterId)
         {
             Character deleteCharcter = await GetByIdAsync(CharacterId);
-            using(MovieCharactersContext context = new())
+            try
             {
-                try
-                {
-                    context.Characters.Remove(deleteCharcter);
-                    await context.SaveChangesAsync();
-                }
-                catch(Exception ex)
-                {
-                    //TODO: not quite sure, how to actually handle this...
-                }
+                _context.Characters.Remove(deleteCharcter);
+                await _context.SaveChangesAsync();
+            }
+            catch
+            {
+                //TODO: not quite sure, how to actually handle this...
             }
             return CharacterId;
         }
@@ -62,17 +63,14 @@ namespace MovieCharacters.DAL.Repositories
         /// <returns>List of all characters from Character Db table</returns>
         public async Task<IEnumerable<Character>> GetAllAsync()
         {
-            List<Character> characters = new ();
-            using(MovieCharactersContext context = new ())
+            List<Character> characters = new();
+            try
             {
-                try
-                {
-                    characters = await context.Characters.Include(c => c.Movies).ToListAsync();
-                }
-                catch(Exception ex)
-                {
-                    //TODO: not quite sure, how to actually handle this...
-                }
+                characters = await _context.Characters.Include(c => c.Movies).ToListAsync();
+            }
+            catch
+            {
+                //TODO: not quite sure, how to actually handle this...
             }
             return characters;
         }
@@ -85,16 +83,13 @@ namespace MovieCharacters.DAL.Repositories
         public async Task<Character> GetByIdAsync(int id)
         {
             Character character = null;
-            using (MovieCharactersContext context = new())
+            try
             {
-                try
-                {
-                    character = await context.Characters.Include(c => c.Movies).FirstOrDefaultAsync(c => c.Id == id);
-                }
-                catch (Exception ex)
-                {
-                    //TODO: not quite sure, how to actually handle this...
-                }
+                character = await _context.Characters.Include(c => c.Movies).FirstOrDefaultAsync(c => c.Id == id);
+            }
+            catch
+            {
+                //TODO: not quite sure, how to actually handle this...
             }
             return character;
         }
@@ -107,44 +102,24 @@ namespace MovieCharacters.DAL.Repositories
         public async Task<Character> UpdateAsync(Character entity)
         {
             Character characterResult;
-            using (MovieCharactersContext context = new())
+
+            _context.Entry(entity).State = EntityState.Modified;
+
+            int intResult = 0;
+            try
             {
-                //Character editCharacter = null;
-                //try
-                //{
-                //    editCharacter = context.Characters.Find(entity.Id);
-                //}
-                //catch(Exception ex)
-                //{
-                //    //TODO: not quite sure, how to actually handle this...
-                //}
-                //if (editCharacter == null)
-                //    return null;
-
-                ////--- change all properties
-                //editCharacter.FullName = entity.FullName;
-                //editCharacter.Alias = entity.Alias;
-                //editCharacter.PictureUrl = entity.PictureUrl;
-                //editCharacter.Gender = entity.Gender;
-                //editCharacter.Movies = ((Character)entity).Movies;
-
-                context.Entry(entity).State = EntityState.Modified;
-
-                int intResult = 0;
-                try
-                {
-                    intResult = await context.SaveChangesAsync();
-                }
-                catch (Exception ex)
-                {
-                    //TODO: not quite sure, how to actually handle this...
-                }
-
-                if (intResult == 0)
-                    return null;
-                //characterResult = editCharacter;
-                characterResult = entity;
+                intResult = await _context.SaveChangesAsync();
             }
+            catch
+            {
+                //TODO: not quite sure, how to actually handle this...
+            }
+
+            if (intResult == 0)
+                return null;
+
+            characterResult = entity;
+
             return characterResult;
         }
     }

@@ -10,6 +10,13 @@ namespace MovieCharacters.DAL.Repositories
 {
     public class MovieRepository : IMovieRepository
     {
+        private readonly MovieCharactersContext _context;
+
+        public MovieRepository(MovieCharactersContext context)
+        {
+            _context = context;
+        }
+
         /// <summary>
         /// adds a movie to the Db
         /// </summary>
@@ -18,18 +25,15 @@ namespace MovieCharacters.DAL.Repositories
         public async Task<Movie> AddAsync(Movie entity)
         {
             Movie movieResult = null;
-            using (MovieCharactersContext context = new())
-            {
                 try
                 {
-                    movieResult = (await context.Movies.AddAsync(entity)).Entity;
-                    int intResult = await context.SaveChangesAsync();
+                    movieResult = (await _context.Movies.AddAsync(entity)).Entity;
+                    int intResult = await _context.SaveChangesAsync();
                 }
-                catch (Exception ex)
+                catch
                 {
                     //TODO: not quite sure, how to actually handle this...
                 }
-            }
             return movieResult;
         }
 
@@ -41,18 +45,15 @@ namespace MovieCharacters.DAL.Repositories
         public async Task<int> DeleteByIdAsync(int MovieId)
         {
             Movie deleteMovie = await GetByIdAsync(MovieId);
-            using (MovieCharactersContext context = new())
-            {
                 try
                 {
-                    context.Movies.Remove(deleteMovie);
-                    await context.SaveChangesAsync();
+                    _context.Movies.Remove(deleteMovie);
+                    await _context.SaveChangesAsync();
                 }
-                catch (Exception ex)
+                catch
                 {
                     //TODO: not quite sure, how to actually handle this...
                 }
-            }
             return MovieId;
         }
 
@@ -63,17 +64,14 @@ namespace MovieCharacters.DAL.Repositories
         public async Task<IEnumerable<Movie>> GetAllAsync()
         {
             List<Movie> movies = new();
-            using (MovieCharactersContext context = new())
-            {
                 try
                 {
-                    movies = await context.Movies.Include(m => m.Characters).ToListAsync();
+                    movies = await _context.Movies.Include(m => m.Characters).ToListAsync();
                 }
-                catch (Exception ex)
+                catch
                 {
                     //TODO: not quite sure, how to actually handle this...
                 }
-            }
             return movies;
         }
 
@@ -85,17 +83,14 @@ namespace MovieCharacters.DAL.Repositories
         public async Task<Movie> GetByIdAsync(int id)
         {
             Movie movie = null;
-            using (MovieCharactersContext context = new())
-            {
                 try
                 {
-                    movie = await context.Movies.Include(m => m.Characters).FirstOrDefaultAsync(m => m.Id == id);
+                    movie = await _context.Movies.Include(m => m.Characters).FirstOrDefaultAsync(m => m.Id == id);
                 }
-                catch (Exception ex)
+                catch
                 {
                     //TODO: not quite sure, how to actually handle this...
                 }
-            }
             return movie;
         }
 
@@ -107,22 +102,19 @@ namespace MovieCharacters.DAL.Repositories
         public async Task<Movie> UpdateAsync(Movie entity)
         {
             Movie movieResult;
-            using (MovieCharactersContext context = new())
-            {
-                context.Entry(entity).State = EntityState.Modified;
+                _context.Entry(entity).State = EntityState.Modified;
                 int intResult = 0;
                 try
                 {
-                    intResult = await context.SaveChangesAsync();
+                    intResult = await _context.SaveChangesAsync();
                 }
-                catch (Exception ex)
+                catch
                 {
                     //TODO: not quite sure, how to actually handle this...
                 }
                 if (intResult == 0)
                     return null;
                 movieResult = entity;
-            }
             return movieResult;
         }
 
@@ -135,15 +127,12 @@ namespace MovieCharacters.DAL.Repositories
         /// <returns>Movie with changed characters</returns>
         public async Task<Movie> SetCharacterIdsAsync(Movie Movie, int[] CharacterIds)
         {
-            using (MovieCharactersContext context = new())
-            {
-                //context.Entry(movie).State = EntityState.Modified;
-                Movie = context.Movies.Include(m => m.Characters).FirstOrDefault(m => m.Id == Movie.Id);
+                Movie = _context.Movies.Include(m => m.Characters).FirstOrDefault(m => m.Id == Movie.Id);
                 //--- add all characters to movie which are not in there already
                 foreach (int characterId in CharacterIds)
                 {
                     if (!Movie.Characters.Any(c => c.Id == characterId))
-                        Movie.Characters.Add(await context.Characters.FindAsync(characterId));
+                        Movie.Characters.Add(await _context.Characters.FindAsync(characterId));
                 }
                 //--- remove all characters from movie which are not supposed to be there any longer
                 foreach(Character character in Movie.Characters)
@@ -154,15 +143,14 @@ namespace MovieCharacters.DAL.Repositories
                 int intResult = 0;
                 try
                 {
-                    intResult = await context.SaveChangesAsync();
+                    intResult = await _context.SaveChangesAsync();
                 }
-                catch (Exception ex)
+                catch
                 {
                     //TODO: not quite sure, how to actually handle this...
                 }
                 if (intResult == 0)
                     return null;
-            }
             return Movie;
         }
 
@@ -174,19 +162,16 @@ namespace MovieCharacters.DAL.Repositories
         public async Task<IEnumerable<Character>> GetCharactersById(int MovieId)
         {
             List<Character> characters = null;
-            using (MovieCharactersContext context = new())
-            {
                 try
                 {
-                    Movie movie = await context.Movies.Include(m => m.Characters).FirstOrDefaultAsync(m => m.Id == MovieId);
+                    Movie movie = await _context.Movies.Include(m => m.Characters).FirstOrDefaultAsync(m => m.Id == MovieId);
                     if(movie != null)
                         characters = movie.Characters.ToList();
                 }
-                catch (Exception ex)
+                catch
                 {
                     //TODO: not quite sure, how to actually handle this...
                 }
-            }
             return characters;
         }
     }
