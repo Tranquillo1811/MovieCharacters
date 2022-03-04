@@ -56,11 +56,6 @@ namespace MovieCharacters.DAL.Repositories
             return MovieId;
         }
 
-        public async Task<IEnumerable<Movie>> FindAllAsync(Expression<Func<Movie, bool>> predicate)
-        {
-            throw new NotImplementedException();
-        }
-
         /// <summary>
         /// gets all movies from Db
         /// </summary>
@@ -131,23 +126,30 @@ namespace MovieCharacters.DAL.Repositories
             return movieResult;
         }
 
-        public async Task<Movie> SetCharacterIdsAsync(Movie movie, int[] characterIds)
+        /// <summary>
+        /// assigns characters to a movie, all previously existent characters will be removed from
+        /// that movie
+        /// </summary>
+        /// <param name="Movie">movie to set characters for</param>
+        /// <param name="CharacterIds">ids of all characters that should be assigned to this movie</param>
+        /// <returns>Movie with changed characters</returns>
+        public async Task<Movie> SetCharacterIdsAsync(Movie Movie, int[] CharacterIds)
         {
             using (MovieCharactersContext context = new())
             {
                 //context.Entry(movie).State = EntityState.Modified;
-                movie = context.Movies.Include(m => m.Characters).FirstOrDefault(m => m.Id == movie.Id);
+                Movie = context.Movies.Include(m => m.Characters).FirstOrDefault(m => m.Id == Movie.Id);
                 //--- add all characters to movie which are not in there already
-                foreach (int characterId in characterIds)
+                foreach (int characterId in CharacterIds)
                 {
-                    if (!movie.Characters.Any(c => c.Id == characterId))
-                        movie.Characters.Add(await context.Characters.FindAsync(characterId));
+                    if (!Movie.Characters.Any(c => c.Id == characterId))
+                        Movie.Characters.Add(await context.Characters.FindAsync(characterId));
                 }
                 //--- remove all characters from movie which are not supposed to be there any longer
-                foreach(Character character in movie.Characters)
+                foreach(Character character in Movie.Characters)
                 {
-                    if (!characterIds.Contains(character.Id))
-                        movie.Characters.Remove(character);
+                    if (!CharacterIds.Contains(character.Id))
+                        Movie.Characters.Remove(character);
                 }
                 int intResult = 0;
                 try
@@ -161,7 +163,31 @@ namespace MovieCharacters.DAL.Repositories
                 if (intResult == 0)
                     return null;
             }
-            return movie;
+            return Movie;
+        }
+
+        /// <summary>
+        /// gets all characters of a particular movie
+        /// </summary>
+        /// <param name="MovieId">id of the movie to get characters from</param>
+        /// <returns>all characters of the movie with this Id</returns>
+        public async Task<IEnumerable<Character>> GetCharactersById(int MovieId)
+        {
+            List<Character> characters = null;
+            using (MovieCharactersContext context = new())
+            {
+                try
+                {
+                    Movie movie = await context.Movies.Include(m => m.Characters).FirstOrDefaultAsync(m => m.Id == MovieId);
+                    if(movie != null)
+                        characters = movie.Characters.ToList();
+                }
+                catch (Exception ex)
+                {
+                    //TODO: not quite sure, how to actually handle this...
+                }
+            }
+            return characters;
         }
     }
 }

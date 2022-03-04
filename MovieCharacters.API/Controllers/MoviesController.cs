@@ -136,7 +136,7 @@ namespace MovieCharacters.API.Controllers
         /// </summary>
         /// <param name="movieId">id of the movie to change characters of</param>
         /// <param name="characterIds">ids of characters to set</param>
-        /// <returns></returns>
+        /// <returns>204 on succesful change, 304 if no actual changes occured, 404 if movieId does not exist</returns>
         [HttpPatch("{movieId}/Characters")]
         [Consumes(MediaTypeNames.Application.Json)]
         [Produces(MediaTypeNames.Application.Json)]
@@ -156,6 +156,28 @@ namespace MovieCharacters.API.Controllers
             }
             await _movieRepository.SetCharacterIdsAsync(movieBll, characterIds);
             return NoContent();
+        }
+        #endregion
+
+        #region report for characters
+        /// <summary>
+        /// Report all characters from movie
+        /// </summary>
+        /// <param name="id">Id of the movie to get characters from</param>
+        /// <returns>A list of all characters assigned to that movie</returns>
+        [HttpGet("ReportCharacters/{id}")]
+        [Consumes(MediaTypeNames.Text.Plain)]
+        [Produces(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<IEnumerable<CharacterReadDto>>> GetCharactersByMovieId(int id)
+        {
+            List<CharacterReadDto> characterReadDtos;
+            IEnumerable<Character> characterBlls = await _movieRepository.GetCharactersById(id);
+            if (characterBlls == null)
+                return NotFound();
+            characterReadDtos = _mapper.Map<List<CharacterReadDto>>(characterBlls);
+            return Ok(characterReadDtos);
         }
         #endregion
 

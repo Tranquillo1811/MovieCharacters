@@ -11,6 +11,7 @@ namespace MovieCharacters.API.Profiles
             CreateMap<Franchise, FranchiseReadDto>()
                 .ForMember(fdto => fdto.Movies, opt => opt.MapFrom(f => f.Movies.Select(m => m.Id).ToArray()))
                 .ReverseMap();
+            CreateMap<Franchise, FranchiseReadDto>().ReverseMap();
         }
     }
 }

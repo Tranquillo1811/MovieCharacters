@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace MovieCharacters.DAL
 {
-    internal class MovieCharactersContext : DbContext
+    public class MovieCharactersContext : DbContext
     {
         public DbSet<Movie> Movies { get; set; }
         public DbSet<Franchise> Franchises { get; set; }

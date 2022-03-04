@@ -183,5 +183,53 @@ namespace MovieCharacters.DAL.Repositories
             }
             return franchiseResult;
         }
+
+        /// <summary>
+        /// gets all movies of a particular franchise
+        /// </summary>
+        /// <param name="FranchiseId">Id of the franchise to get movies from</param>
+        /// <returns>movies of the franchise with that Id or null if no franchise exists with that Id</returns>
+        public async Task<IEnumerable<Movie>> GetMoviesById(int FranchiseId)
+        {
+            List<Movie> movies = null;
+            using (MovieCharactersContext context = new())
+            {
+                try
+                {
+                    Franchise franchise = await context.Franchises.Include(f => f.Movies).FirstOrDefaultAsync(f => f.Id == FranchiseId);
+                    if(franchise != null)
+                        movies = (await context.Franchises.Include(f => f.Movies).FirstOrDefaultAsync(f => f.Id == FranchiseId)).Movies?.ToList();
+                }
+                catch (Exception ex)
+                {
+                    //TODO: not quite sure, how to actually handle this...
+                }
+            }
+            return movies;
+        }
+
+        /// <summary>
+        /// gets all characters of a particular franchise
+        /// </summary>
+        /// <param name="FranchiseId">Id of the franchise to get characters from</param>
+        /// <returns>characters of the franchise with that Id or null if no franchise exists with that Id</returns>
+        public async Task<IEnumerable<Character>> GetCharactersById(int FranchiseId)
+        {
+            List<Character> characters = null;
+            using (MovieCharactersContext context = new())
+            {
+                try
+                {
+                    Franchise franchise = await context.Franchises.Include(f => f.Movies).ThenInclude(m => m.Characters).FirstOrDefaultAsync(f => f.Id == FranchiseId);
+                    if(franchise != null)
+                        characters = franchise.Movies?.SelectMany(m => m.Characters).Distinct().ToList();
+                }
+                catch (Exception ex)
+                {
+                    //TODO: not quite sure, how to actually handle this...
+                }
+            }
+            return characters;
+        }
     }
 }

@@ -10,5 +10,8 @@ namespace MovieCharacters.BLL.Models
     {
         public Task<Franchise> SetMovieIdsAsync(Franchise Franchise, int[] MovieIds);
 
+        public Task<IEnumerable<Movie>> GetMoviesById(int FranchiseId);
+
+        public Task<IEnumerable<Character>> GetCharactersById(int FranchiseId);
     }
 }

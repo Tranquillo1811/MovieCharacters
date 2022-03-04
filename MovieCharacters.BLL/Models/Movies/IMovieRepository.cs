@@ -9,5 +9,7 @@ namespace MovieCharacters.BLL.Models
     public interface IMovieRepository : IRepository<Movie>
     {
         public Task<Movie> SetCharacterIdsAsync(Movie movie, int[] characterIds);
+
+        public Task<IEnumerable<Character>> GetCharactersById(int FranchiseId);
     }
 }
