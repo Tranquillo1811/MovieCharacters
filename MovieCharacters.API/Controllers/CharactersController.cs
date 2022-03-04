@@ -6,8 +6,6 @@ using System.Collections.Generic;
 using System.Net.Mime;
 using System.Threading.Tasks;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace MovieCharacters.API.Controllers
 {
     [Route("api/[controller]")]
@@ -29,13 +27,13 @@ namespace MovieCharacters.API.Controllers
         [HttpGet]
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<IEnumerable<CharacterReadDto>>> GetAsync()
         {
             List<CharacterReadDto> characters;
             var charactersBLL = await _characterRepository.GetAllAsync();
             if (charactersBLL == null)
-                return NoContent();
+                return NotFound();
             characters = _mapper.Map<List<CharacterReadDto>>(charactersBLL);
             return Ok(characters);
         }

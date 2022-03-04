@@ -16,13 +16,11 @@ namespace MovieCharacters.API.Controllers
     public class MoviesController : ControllerBase
     {
         private readonly IMovieRepository _movieRepository;
-        private readonly ICharacterRepository _characterRepository;
         private readonly IMapper _mapper;
 
-        public MoviesController(IMovieRepository movieRepository, ICharacterRepository characterRepository, IMapper mapper)
+        public MoviesController(IMovieRepository movieRepository, IMapper mapper)
         {
             _movieRepository = movieRepository;
-            _characterRepository = characterRepository;
             _mapper = mapper;
         }
 
@@ -139,7 +137,7 @@ namespace MovieCharacters.API.Controllers
         /// <param name="movieId">id of the movie to change characters of</param>
         /// <param name="characterIds">ids of characters to set</param>
         /// <returns></returns>
-        [HttpPatch("{movieId}")]
+        [HttpPatch("{movieId}/Characters")]
         [Consumes(MediaTypeNames.Application.Json)]
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status304NotModified)]

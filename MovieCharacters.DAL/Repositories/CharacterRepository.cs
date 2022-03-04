@@ -109,7 +109,6 @@ namespace MovieCharacters.DAL.Repositories
         /// </summary>
         /// <param name="entity">character to be updated</param>
         /// <returns>updated character</returns>
-        /// <exception cref="NotImplementedException"></exception>
         public async Task<Character> UpdateAsync(Character entity)
         {
             Character characterResult;
