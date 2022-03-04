@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MovieCharacters.BLL.Models
 {
-    public class MovieDto
+    public class MovieAddDto
     {
         public int Id { get; set; }
         public string Title { get; set; }
@@ -15,7 +15,6 @@ namespace MovieCharacters.BLL.Models
         public string Director { get; set; }
         public string MoviePosterUrl { get; set; }
         public string TrailerUrl { get; set; }
-        public int[] Characters { get; set; }
         public int Franchise { get; set; }
     }
 }

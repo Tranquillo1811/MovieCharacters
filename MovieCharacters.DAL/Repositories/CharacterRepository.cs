@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace MovieCharacters.DAL.Repositories
@@ -73,7 +72,7 @@ namespace MovieCharacters.DAL.Repositories
             {
                 try
                 {
-                    characters = await context.Characters.Cast<Character>().ToListAsync();
+                    characters = await context.Characters.Include(c => c.Movies).ToListAsync();
                 }
                 catch(Exception ex)
                 {
@@ -95,7 +94,7 @@ namespace MovieCharacters.DAL.Repositories
             {
                 try
                 {
-                    character = await context.Characters.FindAsync(id);
+                    character = await context.Characters.Include(c => c.Movies).FirstOrDefaultAsync(c => c.Id == id);
                 }
                 catch (Exception ex)
                 {
@@ -110,7 +109,6 @@ namespace MovieCharacters.DAL.Repositories
         /// </summary>
         /// <param name="entity">character to be updated</param>
         /// <returns>updated character</returns>
-        /// <exception cref="NotImplementedException"></exception>
         public async Task<Character> UpdateAsync(Character entity)
         {
             Character characterResult;

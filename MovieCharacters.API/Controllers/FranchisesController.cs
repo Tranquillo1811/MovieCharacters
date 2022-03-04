@@ -5,8 +5,7 @@ using System.Net.Mime;
 using System.Collections.Generic;
 using AutoMapper;
 using MovieCharacters.BLL.Models;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using System.Linq;
 
 namespace MovieCharacters.API.Controllers
 {
@@ -23,17 +22,22 @@ namespace MovieCharacters.API.Controllers
             _mapper = mapper;
         }
 
+        #region generic CRUD endpoints
         /// <summary>
         /// Get a list of all franchises
         /// </summary>
         /// <returns>List of each franchise details</returns>
         [HttpGet]
-        [ProducesResponseType(200)]
-        public async Task<ActionResult<IEnumerable<FranchiseDto>>> GetAsync()
+        [Produces(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<IEnumerable<FranchiseReadDto>>> GetAsync()
         {
-            List<FranchiseDto> franchises = new();
-            var franchiseEntities = await _franchiseRepository.GetAllAsync();
-            franchises = _mapper.Map<List<FranchiseDto>>(franchiseEntities);
+            List<FranchiseReadDto> franchises;
+            var franchiseBLL = await _franchiseRepository.GetAllAsync();
+            if (franchiseBLL == null)
+                return NotFound();
+            franchises = _mapper.Map<List<FranchiseReadDto>>(franchiseBLL);
             return Ok(franchises);
         }
 
@@ -43,11 +47,18 @@ namespace MovieCharacters.API.Controllers
         /// <param name="id">Franchise unique id</param>
         /// <returns>Franchise details as a class object</returns>
         [HttpGet("{id}")]
-        [ProducesResponseType(200)]
-        public async Task<FranchiseDto> GetAsync(int id)
+        [Consumes(MediaTypeNames.Text.Plain)]
+        [Produces(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<FranchiseReadDto>> GetAsyncById(int id)
         {
-            FranchiseDto franchise = _mapper.Map<FranchiseDto>(await _franchiseRepository.GetByIdAsync(id));
-            return franchise;
+            FranchiseReadDto franchise;
+            Franchise franchiseBLL = await _franchiseRepository.GetByIdAsync(id);
+            if (franchiseBLL == null)
+                return NotFound();
+            franchise = _mapper.Map<FranchiseReadDto>(await _franchiseRepository.GetByIdAsync(id));
+            return Ok(franchise);
         }
 
         /// <summary>
@@ -56,11 +67,11 @@ namespace MovieCharacters.API.Controllers
         /// <param name="value">Franchise object with all details</param>
         /// <returns>True if a franchise was inserted successfully</returns>
         [HttpPost]
-        public async Task<ActionResult<FranchiseDto>> Post([FromBody] FranchiseDto value)
+        public async Task<ActionResult<FranchiseReadDto>> Post([FromBody] FranchiseReadDto value)
         {
             Franchise franchise = _mapper.Map<Franchise>(value);
             Franchise result = await _franchiseRepository.AddAsync(franchise);
-            FranchiseDto resultDto = _mapper.Map<FranchiseDto>(result);
+            FranchiseReadDto resultDto = _mapper.Map<FranchiseReadDto>(result);
             return Ok(resultDto);
         }
 
@@ -77,19 +88,19 @@ namespace MovieCharacters.API.Controllers
         [ProducesResponseType(StatusCodes.Status304NotModified)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<ActionResult> Put(int id, [FromBody] FranchiseDto value)
+        public async Task<ActionResult> Put(int id, [FromBody] FranchiseReadDto value)
         {
             if (id != value.Id)
                 return BadRequest();
 
             Franchise franchise = _mapper.Map<Franchise>(value);
             Franchise franchiseCharacter = await _franchiseRepository.GetByIdAsync(id);
-            if (franchiseCharacter == null)   //--- if characterId doesn't exist
+            if (franchiseCharacter == null)   //--- if franchiseId doesn't exist
                 return NotFound();
             if (franchiseCharacter.Equals(franchise))  //--- if nothing was actually changed
             {
-                CharacterReadDto characterDto = _mapper.Map<CharacterReadDto>(franchise);
-                return StatusCode(StatusCodes.Status304NotModified, characterDto);
+                FranchiseReadDto franchiseDto = _mapper.Map<FranchiseReadDto>(franchise);
+                return StatusCode(StatusCodes.Status304NotModified, franchiseDto);
             }
             await _franchiseRepository.UpdateAsync(franchise);
             return NoContent();
@@ -106,14 +117,44 @@ namespace MovieCharacters.API.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteById(int id)
         {
-            Franchise characterBll = await _franchiseRepository.GetByIdAsync(id);
+            Franchise franchiseBll = await _franchiseRepository.GetByIdAsync(id);
 
-            if (characterBll == null)
+            if (franchiseBll == null)
                 return NoContent();
 
             await _franchiseRepository.DeleteByIdAsync(id);
 
             return Ok();
         }
+        #endregion
+
+        #region update movies in a franchise
+        /// <summary>
+        /// updates movies of a franchise
+        /// </summary>
+        /// <param name="franchiseId">id of the franchise to change movies of</param>
+        /// <param name="moviesIds">ids of movies to set</param>
+        /// <returns></returns>
+        [HttpPatch("{movieId}/Characters")]
+        [Consumes(MediaTypeNames.Application.Json)]
+        [Produces(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(StatusCodes.Status304NotModified)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task<ActionResult> Patch(int franchiseId, [FromBody] int[] moviesIds)
+        {
+            Franchise franchiseBll = await _franchiseRepository.GetByIdAsync(franchiseId);
+            if (franchiseBll == null)   //--- if franchiseId doesn't exist
+                return NotFound();
+            int[] currentFranchiseMovieIds = franchiseBll.Movies.Select(m => m.Id).ToArray();
+            if (string.Join(',', currentFranchiseMovieIds.OrderBy(id => id)) == string.Join(',', moviesIds.OrderBy(id => id)))  //--- if nothing was actually changed
+            {
+                FranchiseReadDto movieDto = _mapper.Map<FranchiseReadDto>(franchiseBll);
+                return StatusCode(StatusCodes.Status304NotModified, movieDto);
+            }
+            await _franchiseRepository.SetMovieIdsAsync(franchiseBll, moviesIds);
+            return NoContent();
+        }
+        #endregion
     }
 }

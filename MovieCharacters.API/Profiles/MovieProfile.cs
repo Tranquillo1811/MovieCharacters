@@ -8,7 +8,7 @@ namespace MovieCharacters.API.Profiles
     {
         public MovieProfile()
         {
-            CreateMap<Movie, MovieDto>()
+            CreateMap<Movie, MovieReadDto>()
                 .ForMember(mdto => mdto.Franchise, opt => opt.MapFrom(m => m.FranchiseId))
                 .ForMember(mdto => mdto.Characters, opt => opt.MapFrom(m => m.Characters.Select(c => c.Id).ToArray()))
                 .ReverseMap();
