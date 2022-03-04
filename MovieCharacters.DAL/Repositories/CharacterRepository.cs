@@ -103,6 +103,7 @@ namespace MovieCharacters.DAL.Repositories
         {
             Character characterResult;
 
+            _context.Entry(await _context.Characters.FindAsync(entity.Id)).State = EntityState.Detached;
             _context.Entry(entity).State = EntityState.Modified;
 
             int intResult = 0;

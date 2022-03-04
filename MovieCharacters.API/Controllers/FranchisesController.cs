@@ -67,7 +67,7 @@ namespace MovieCharacters.API.Controllers
         /// <param name="value">Franchise object with all details</param>
         /// <returns>True if a franchise was inserted successfully</returns>
         [HttpPost]
-        public async Task<ActionResult<FranchiseReadDto>> Post([FromBody] FranchiseReadDto value)
+        public async Task<ActionResult<FranchiseReadDto>> Post([FromBody] FranchiseAddDto value)
         {
             Franchise franchise = _mapper.Map<Franchise>(value);
             Franchise result = await _franchiseRepository.AddAsync(franchise);
@@ -88,7 +88,7 @@ namespace MovieCharacters.API.Controllers
         [ProducesResponseType(StatusCodes.Status304NotModified)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<ActionResult> Put(int id, [FromBody] FranchiseReadDto value)
+        public async Task<ActionResult> Put(int id, [FromBody] FranchiseUpdateDto value)
         {
             if (id != value.Id)
                 return BadRequest();
@@ -135,7 +135,7 @@ namespace MovieCharacters.API.Controllers
         /// <param name="franchiseId">id of the franchise to change movies of</param>
         /// <param name="moviesIds">ids of movies to set</param>
         /// <returns></returns>
-        [HttpPatch("{movieId}/Characters")]
+        [HttpPatch("{franchiseId}/Movies")]
         [Consumes(MediaTypeNames.Application.Json)]
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status304NotModified)]

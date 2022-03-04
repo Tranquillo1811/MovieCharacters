@@ -149,6 +149,7 @@ namespace MovieCharacters.DAL.Repositories
         public async Task<Franchise> UpdateAsync(Franchise entity)
         {
             Franchise franchiseResult;
+            _context.Entry(await _context.Franchises.FindAsync(entity.Id)).State = EntityState.Detached;
             _context.Entry(entity).State = EntityState.Modified;
 
             int intResult = 0;
