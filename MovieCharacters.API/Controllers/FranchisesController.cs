@@ -1,5 +1,7 @@
 ﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Net.Mime;
 using System.Collections.Generic;
 using AutoMapper;
 using MovieCharacters.BLL.Models;
@@ -62,16 +64,56 @@ namespace MovieCharacters.API.Controllers
             return Ok(resultDto);
         }
 
-        // PUT api/<FranchisesController>/5
+        /// <summary>
+        /// updates existing Franchise in the Db
+        /// </summary>
+        /// <param name="id">id of the franchise that is subject to change</param>
+        /// <param name="value">JSON of updated character object</param>
+        /// <returns></returns>
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [Consumes(MediaTypeNames.Application.Json)]
+        [Produces(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status304NotModified)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task<ActionResult> Put(int id, [FromBody] FranchiseDto value)
         {
+            if (id != value.Id)
+                return BadRequest();
+
+            Franchise franchise = _mapper.Map<Franchise>(value);
+            Franchise franchiseCharacter = await _franchiseRepository.GetByIdAsync(id);
+            if (franchiseCharacter == null)   //--- if characterId doesn't exist
+                return NotFound();
+            if (franchiseCharacter.Equals(franchise))  //--- if nothing was actually changed
+            {
+                CharacterReadDto characterDto = _mapper.Map<CharacterReadDto>(franchise);
+                return StatusCode(StatusCodes.Status304NotModified, characterDto);
+            }
+            await _franchiseRepository.UpdateAsync(franchise);
+            return NoContent();
         }
 
-        // DELETE api/<FranchisesController>/5
+        /// <summary>
+        /// deletes the franchise with the respective Id
+        /// </summary>
+        /// <param name="id">Id of the franchise to be deleted</param>
+        /// <returns>200 if character has been deleted or 204 if character wasn't present at all</returns>
+        [Consumes(MediaTypeNames.Text.Plain)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<ActionResult> DeleteById(int id)
         {
+            Franchise characterBll = await _franchiseRepository.GetByIdAsync(id);
+
+            if (characterBll == null)
+                return NoContent();
+
+            await _franchiseRepository.DeleteByIdAsync(id);
+
+            return Ok();
         }
     }
 }
